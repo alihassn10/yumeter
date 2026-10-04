@@ -102,6 +102,49 @@ class OnboardingAnswers {
     return years;
   }
 
+  /// Persisted shape. Enums are stored by name so reordering a declaration
+  /// cannot silently change a saved profile's meaning.
+  Map<String, dynamic> toJson() => {
+        'sex': sex?.name,
+        'birthDate': birthDate?.toIso8601String(),
+        'heightCm': heightCm,
+        'weightKg': weightKg,
+        'activityLevel': activityLevel?.name,
+        'goal': goal?.name,
+        'targetWeightKg': targetWeightKg,
+        'paceKgPerWeek': paceKgPerWeek,
+        'dietType': dietType.name,
+        'units': units.name,
+      };
+
+  factory OnboardingAnswers.fromJson(Map<String, dynamic> json) {
+    /// Returns null for an unknown name rather than throwing, so a profile
+    /// written by an older build still loads after an enum is renamed.
+    T? byName<T extends Enum>(List<T> values, Object? name) {
+      if (name is! String) return null;
+      for (final value in values) {
+        if (value.name == name) return value;
+      }
+      return null;
+    }
+
+    final birth = json['birthDate'];
+
+    return OnboardingAnswers(
+      sex: byName(Sex.values, json['sex']),
+      birthDate: birth is String ? DateTime.tryParse(birth) : null,
+      heightCm: (json['heightCm'] as num?)?.toDouble(),
+      weightKg: (json['weightKg'] as num?)?.toDouble(),
+      activityLevel: byName(ActivityLevel.values, json['activityLevel']),
+      goal: byName(WeightGoal.values, json['goal']),
+      targetWeightKg: (json['targetWeightKg'] as num?)?.toDouble(),
+      paceKgPerWeek: (json['paceKgPerWeek'] as num?)?.toDouble() ?? 0.5,
+      dietType:
+          byName(DietType.values, json['dietType']) ?? DietType.balanced,
+      units: byName(UnitSystem.values, json['units']) ?? UnitSystem.metric,
+    );
+  }
+
   OnboardingAnswers copyWith({
     Sex? sex,
     DateTime? birthDate,

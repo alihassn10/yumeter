@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/paywall/paywall_screen.dart';
+import '../../features/plan/creating_plan_screen.dart';
+import '../../features/plan/plan_reveal_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../theme/app_dimens.dart';
@@ -26,10 +29,19 @@ final appRouter = GoRouter(
       path: AppRoutes.onboarding,
       builder: (_, _) => const OnboardingScreen(),
     ),
+    GoRoute(
+      path: AppRoutes.creatingPlan,
+      builder: (_, _) => const CreatingPlanScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.planReveal,
+      builder: (_, _) => const PlanRevealScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.paywall,
+      builder: (_, _) => const PaywallScreen(),
+    ),
     for (final (path, title) in const [
-      (AppRoutes.creatingPlan, 'Creating your plan'),
-      (AppRoutes.planReveal, 'Your plan'),
-      (AppRoutes.paywall, 'Paywall'),
       (AppRoutes.today, 'Today'),
       (AppRoutes.analytics, 'Analytics'),
       (AppRoutes.meals, 'Meals'),
