@@ -1,0 +1,24 @@
+/// Route paths, kept in one place so screens never hard-code a string.
+abstract final class AppRoutes {
+  static const splash = '/';
+  static const welcome = '/welcome';
+  static const onboarding = '/onboarding';
+  static const creatingPlan = '/creating-plan';
+  static const planReveal = '/plan';
+  static const paywall = '/paywall';
+
+  // Home shell tabs.
+  static const today = '/today';
+  static const analytics = '/analytics';
+  static const meals = '/meals';
+  static const settings = '/settings';
+
+  // Logging flow.
+  static const scan = '/scan';
+  static const mealResult = '/meal-result';
+  static const foodSearch = '/food-search';
+  static const barcodeResult = '/barcode-result';
+  static const quickAdd = '/quick-add';
+
+  static const deleteAccount = '/settings/delete-account';
+}
