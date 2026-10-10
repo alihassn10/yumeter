@@ -120,6 +120,19 @@ void main() {
     expect(meals.rows.values.map((e) => e.name), ['Lunch']);
   });
 
+  test('signing out offline still wipes the phone', () async {
+    final c = await container(profile: sampleProfile);
+    await signIn(c);
+    await logMeal(c, 'Lunch');
+    auth.offline = true;
+
+    await c.read(accountSyncProvider).signOut();
+
+    expect(c.read(currentUserProvider), isNull);
+    expect(c.read(mealLogProvider), isEmpty);
+    expect(c.read(storedProfileProvider), isNull);
+  });
+
   test('changes made offline are counted before sign-out', () async {
     final c = await container();
     await signIn(c);

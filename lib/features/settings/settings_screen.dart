@@ -67,9 +67,10 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           Text('Account', style: AppTypography.labelLarge),
           const SizedBox(height: AppSpacing.sm),
-          Container(
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
+          // A Material, not a coloured box, so the tiles' ink shows on tap.
+          Material(
+            color: AppColors.surface,
+            shape: const RoundedRectangleBorder(
               borderRadius: AppRadii.cardShape,
             ),
             clipBehavior: Clip.antiAlias,

@@ -136,7 +136,13 @@ class AccountSync {
   /// Signs out and wipes this phone's copy, so the next person to sign in
   /// never sees it.
   Future<void> signOut() async {
-    await _ref.read(authRepositoryProvider).signOut();
+    try {
+      await _ref.read(authRepositoryProvider).signOut();
+    } on Exception catch (e) {
+      // The session is dropped on the phone before the server is told, so an
+      // offline sign-out has already happened here; finish clearing up.
+      debugPrint('Sign-out could not reach the server: $e');
+    }
     _ref.read(currentUserProvider.notifier).refresh();
     await _clearLocal();
     await _ref.read(sharedPreferencesProvider).remove(_ownerKey);

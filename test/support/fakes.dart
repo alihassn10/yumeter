@@ -15,6 +15,10 @@ class FakeAuthRepository implements AuthRepository {
 
   AuthUser? user;
   AuthUser signInAs;
+
+  /// Mimics Supabase offline: the session is dropped locally, then the call
+  /// to revoke it on the server fails.
+  bool offline = false;
   final _changes = StreamController<AuthUser?>.broadcast();
   final sentCodesTo = <String>[];
 
@@ -42,6 +46,7 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     user = null;
     _changes.add(null);
+    if (offline) throw Exception('offline');
   }
 }
 
