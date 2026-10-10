@@ -15,7 +15,15 @@ abstract final class AppTheme {
       surfaceContainerHighest: AppColors.track,
       primary: AppColors.calories,
       onPrimary: AppColors.canvas,
-      secondary: AppColors.protein,
+      // Material components fall back to `secondary` for tonal buttons and
+      // selections. It was the protein pink, which leaked into unrelated
+      // controls; the brand orange keeps them on palette.
+      secondary: AppColors.calories,
+      onSecondary: AppColors.canvas,
+      // The orange at 15% over the card surface, made opaque so it reads the
+      // same on any background.
+      secondaryContainer: Color(0xFF3B2920),
+      onSecondaryContainer: AppColors.calories,
       error: AppColors.error,
       onError: AppColors.canvas,
       outline: AppColors.outline,
@@ -102,6 +110,20 @@ abstract final class AppTheme {
         showDragHandle: true,
         dragHandleColor: AppColors.outline,
         shape: RoundedRectangleBorder(borderRadius: AppRadii.sheetShape),
+      ),
+
+      // Floats above the tab bar in the dark palette; the default is a light
+      // slab that glares against the canvas.
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.track,
+        contentTextStyle:
+            AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary),
+        actionTextColor: AppColors.calories,
+        behavior: SnackBarBehavior.floating,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(AppRadii.md)),
+        ),
       ),
 
       dividerTheme: const DividerThemeData(

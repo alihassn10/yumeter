@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/onboarding/domain/onboarding_answers.dart';
+import 'preferences.dart';
 
 /// Local persistence for the user's profile.
 ///
@@ -38,10 +39,8 @@ class ProfileStore {
   Future<void> clear() => _prefs.remove(_answersKey);
 }
 
-/// Overridden in `main` once [SharedPreferences] has loaded, so the rest of the
-/// app can read the store synchronously.
 final profileStoreProvider = Provider<ProfileStore>(
-  (ref) => throw StateError('profileStoreProvider was not initialised'),
+  (ref) => ProfileStore(ref.watch(sharedPreferencesProvider)),
 );
 
 /// The stored profile at launch. Null means onboarding has not been completed.

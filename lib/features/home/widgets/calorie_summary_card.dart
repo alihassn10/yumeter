@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_dimens.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/format.dart';
 import '../../../core/widgets/accent_badge.dart';
 import '../../../core/widgets/calorie_ring.dart';
 import '../../../core/widgets/macro_stat.dart';
@@ -55,7 +56,7 @@ class CalorieSummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      remaining.abs().toString(),
+                      groupedNumber(remaining.abs()),
                       style: AppTypography.metricHeadline.copyWith(
                         color: overBudget
                             ? AppColors.error
@@ -66,6 +67,13 @@ class CalorieSummaryCard extends StatelessWidget {
                     Text(
                       overBudget ? 'Calories over' : 'Calories left',
                       style: AppTypography.bodyMedium,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      'Eaten ${groupedNumber(consumed)} · '
+                      'Goal ${groupedNumber(goal)}',
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.textHint),
                     ),
                   ],
                 ),

@@ -22,7 +22,7 @@ void main() {
       fatGoal: 70,
     )));
 
-    expect(find.text('1240'), findsOneWidget);
+    expect(find.text('1,240'), findsOneWidget);
     expect(find.text('Calories left'), findsOneWidget);
   });
 

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/home/home_shell.dart';
+import '../../features/home/today_screen.dart';
+import '../../features/log/quick_add_screen.dart';
+import '../../features/meals/domain/meal_entry.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/paywall/paywall_screen.dart';
 import '../../features/plan/creating_plan_screen.dart';
@@ -41,21 +45,61 @@ final appRouter = GoRouter(
       path: AppRoutes.paywall,
       builder: (_, _) => const PaywallScreen(),
     ),
+
+    // The four tabs, each with its own back stack.
+    StatefulShellRoute.indexedStack(
+      builder: (_, _, shell) => HomeShell(navigationShell: shell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.today,
+              builder: (_, _) => const TodayScreen(),
+            ),
+          ],
+        ),
+        for (final (path, title) in const [
+          (AppRoutes.analytics, 'Progress'),
+          (AppRoutes.meals, 'Meals'),
+          (AppRoutes.settings, 'Settings'),
+        ])
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: path,
+                builder: (_, _) => _Placeholder(title: title),
+              ),
+            ],
+          ),
+      ],
+    ),
+
+    // Logging flows open full screen, above the tab bar.
+    GoRoute(
+      path: AppRoutes.quickAdd,
+      builder: (_, state) => QuickAddScreen(
+        initialType: _mealTypeFrom(state.uri.queryParameters['meal']),
+      ),
+    ),
     for (final (path, title) in const [
-      (AppRoutes.today, 'Today'),
-      (AppRoutes.analytics, 'Analytics'),
-      (AppRoutes.meals, 'Meals'),
-      (AppRoutes.settings, 'Settings'),
       (AppRoutes.scan, 'Scan'),
       (AppRoutes.mealResult, 'Meal result'),
       (AppRoutes.foodSearch, 'Food search'),
       (AppRoutes.barcodeResult, 'Barcode result'),
-      (AppRoutes.quickAdd, 'Quick add'),
       (AppRoutes.deleteAccount, 'Delete account'),
     ])
       GoRoute(path: path, builder: (_, _) => _Placeholder(title: title)),
   ],
 );
+
+/// Reads the `?meal=` parameter the log sheet passes along. An unknown value
+/// falls back to the screen's own time-of-day guess.
+MealType? _mealTypeFrom(String? name) {
+  for (final type in MealType.values) {
+    if (type.name == name) return type;
+  }
+  return null;
+}
 
 class _Placeholder extends StatelessWidget {
   const _Placeholder({required this.title});
