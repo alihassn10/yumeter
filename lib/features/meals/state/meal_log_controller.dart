@@ -1,23 +1,116 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/utils/dates.dart';
+import '../../auth/data/auth_repository.dart';
 import '../data/meal_log_store.dart';
+import '../data/meal_remote.dart';
 import '../domain/meal_entry.dart';
 
 /// Every logged meal, oldest first.
+///
+/// Local first: every change lands on the phone immediately and is queued for
+/// the account, then pushed in the background. A failed push leaves the queue
+/// in place for the next attempt, so logging offline loses nothing.
 class MealLogController extends Notifier<List<MealEntry>> {
   static const _uuid = Uuid();
 
+  /// Sync work runs one task at a time, in order.
+  Future<void> _queue = Future.value();
+
+  MealLogStore get _store => ref.read(mealLogStoreProvider);
+
   @override
-  List<MealEntry> build() => _sorted(ref.watch(mealLogStoreProvider).load());
+  List<MealEntry> build() {
+    final entries = _sorted(ref.watch(mealLogStoreProvider).load());
+    if (ref.read(currentUserProvider) != null) {
+      // After the first frame's state is set, not during build.
+      Future.microtask(sync);
+    }
+    return entries;
+  }
 
   List<MealEntry> _sorted(Iterable<MealEntry> entries) =>
       [...entries]..sort((a, b) => a.loggedAt.compareTo(b.loggedAt));
 
-  Future<void> _commit(List<MealEntry> next) async {
+  Future<void> _commit(
+    List<MealEntry> next,
+    Map<String, PendingOp> changes,
+  ) async {
+    final store = _store;
     state = _sorted(next);
-    await ref.read(mealLogStoreProvider).save(state);
+    await store.save(state);
+    await store.markPending(changes);
+    unawaited(_enqueue(_push));
+  }
+
+  /// Sends queued changes, then brings in anything changed on another device.
+  /// Called on launch, on sign-in and when the app returns to the foreground.
+  Future<void> sync() => _enqueue(() async {
+        await _push();
+        await _pull();
+      });
+
+  /// Number of changes on this phone the account has not received yet.
+  int get unsyncedCount => _store.loadPending().length;
+
+  Future<void> _enqueue(Future<void> Function() task) {
+    return _queue = _queue.then((_) async {
+      if (!ref.mounted || ref.read(currentUserProvider) == null) return;
+      try {
+        await task();
+      } on Exception catch (e) {
+        // Offline or a server error: the queue stays put for the next try.
+        debugPrint('Meal sync deferred: $e');
+      }
+    });
+  }
+
+  Future<void> _push() async {
+    final sent = _store.loadPending();
+    if (sent.isEmpty) return;
+
+    final remote = ref.read(mealRemoteProvider);
+    final byId = {for (final e in state) e.id: e};
+    await remote.upsert([
+      for (final MapEntry(:key, :value) in sent.entries)
+        if (value.op == PendingOp.upsert) ?byId[key],
+    ]);
+    await remote.delete([
+      for (final MapEntry(:key, :value) in sent.entries)
+        if (value.op == PendingOp.delete) key,
+    ]);
+    if (!ref.mounted) return;
+
+    // Clear only what was sent; an edit made mid-push keeps its newer stamp.
+    final now = _store.loadPending()
+      ..removeWhere((id, change) => sent[id]?.stamp == change.stamp);
+    await _store.savePending(now);
+  }
+
+  Future<void> _pull() async {
+    if (!ref.mounted) return;
+    final userId = ref.read(currentUserProvider)?.id;
+    final remote = await ref.read(mealRemoteProvider).fetchAll();
+    // Signed out or switched account while the request was out.
+    if (!ref.mounted || ref.read(currentUserProvider)?.id != userId) return;
+
+    // The account wins, except for changes still waiting to go up.
+    final local = {for (final e in state) e.id: e};
+    final merged = {for (final e in remote) e.id: e};
+    _store.loadPending().forEach((id, change) {
+      if (change.op == PendingOp.delete) {
+        merged.remove(id);
+      } else if (local[id] case final entry?) {
+        merged[id] = entry;
+      }
+    });
+
+    state = _sorted(merged.values);
+    await _store.save(state);
   }
 
   Future<MealEntry> add({
@@ -41,7 +134,7 @@ class MealLogController extends Notifier<List<MealEntry>> {
       fatGrams: fatGrams,
       source: source,
     );
-    await _commit([...state, entry]);
+    await _commit([...state, entry], {entry.id: PendingOp.upsert});
     return entry;
   }
 
@@ -63,13 +156,15 @@ class MealLogController extends Notifier<List<MealEntry>> {
         loggedAt: loggedAt,
       );
 
-  Future<void> remove(String id) =>
-      _commit([for (final e in state) if (e.id != id) e]);
+  Future<void> remove(String id) => _commit(
+        [for (final e in state) if (e.id != id) e],
+        {id: PendingOp.delete},
+      );
 
   /// Puts a removed entry back with its original id and time, for undo.
   Future<void> restore(MealEntry entry) async {
     if (state.any((e) => e.id == entry.id)) return;
-    await _commit([...state, entry]);
+    await _commit([...state, entry], {entry.id: PendingOp.upsert});
   }
 }
 

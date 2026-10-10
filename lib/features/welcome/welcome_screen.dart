@@ -61,19 +61,19 @@ class WelcomeScreen extends StatelessWidget {
                 icon: Icons.apple,
                 label: 'Continue with Apple',
                 filled: true,
-                onPressed: () => _startOnboarding(context),
+                onPressed: () => _notYetAvailable(context, 'Apple'),
               ),
               const SizedBox(height: AppSpacing.md),
               _SignInButton(
                 icon: Icons.g_mobiledata_rounded,
                 label: 'Continue with Google',
-                onPressed: () => _startOnboarding(context),
+                onPressed: () => _notYetAvailable(context, 'Google'),
               ),
               const SizedBox(height: AppSpacing.md),
               _SignInButton(
                 icon: Icons.mail_outline_rounded,
                 label: 'Continue with email',
-                onPressed: () => _startOnboarding(context),
+                onPressed: () => context.push(AppRoutes.signIn),
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
@@ -92,9 +92,18 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  // TODO(auth): run the real provider sign-in before entering onboarding.
-  void _startOnboarding(BuildContext context) =>
-      context.go(AppRoutes.onboarding);
+  // TODO(auth): Apple and Google sign-in. Apple's guideline 4.8 requires the
+  // Apple option whenever Google sign-in ships.
+  void _notYetAvailable(BuildContext context, String provider) =>
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              '$provider sign-in is coming soon. Use email for now.',
+            ),
+          ),
+        );
 }
 
 /// A still of the meal breakdown the app produces, shown as proof before

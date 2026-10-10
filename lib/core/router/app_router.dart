@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/sign_in_screen.dart';
 import '../../features/home/home_shell.dart';
 import '../../features/home/today_screen.dart';
 import '../../features/log/quick_add_screen.dart';
@@ -9,6 +10,7 @@ import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/paywall/paywall_screen.dart';
 import '../../features/plan/creating_plan_screen.dart';
 import '../../features/plan/plan_reveal_screen.dart';
+import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 import '../theme/app_dimens.dart';
@@ -28,6 +30,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.welcome,
       builder: (_, _) => const WelcomeScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.signIn,
+      builder: (_, _) => const SignInScreen(),
     ),
     GoRoute(
       path: AppRoutes.onboarding,
@@ -61,7 +67,6 @@ final appRouter = GoRouter(
         for (final (path, title) in const [
           (AppRoutes.analytics, 'Progress'),
           (AppRoutes.meals, 'Meals'),
-          (AppRoutes.settings, 'Settings'),
         ])
           StatefulShellBranch(
             routes: [
@@ -71,6 +76,14 @@ final appRouter = GoRouter(
               ),
             ],
           ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.settings,
+              builder: (_, _) => const SettingsScreen(),
+            ),
+          ],
+        ),
       ],
     ),
 

@@ -2,6 +2,7 @@
 abstract final class AppRoutes {
   static const splash = '/';
   static const welcome = '/welcome';
+  static const signIn = '/sign-in';
   static const onboarding = '/onboarding';
   static const creatingPlan = '/creating-plan';
   static const planReveal = '/plan';

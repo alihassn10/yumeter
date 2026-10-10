@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/brand_mark.dart';
+import '../auth/data/account_sync.dart';
+import '../auth/data/auth_repository.dart';
 
 /// Brand moment while the app boots. It holds for a beat so the mark can
 /// animate in, then hands off to the first real screen.
@@ -31,11 +35,31 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // The widget can be disposed if the user backgrounds the app mid-animation.
     if (!mounted) return;
 
-    // A stored profile means onboarding is already done.
-    // TODO(auth): also require a signed-in session once auth exists.
-    final returning = ref.read(storedProfileProvider) != null;
-    context.go(returning ? AppRoutes.today : AppRoutes.welcome);
+    // Supabase restored any saved session before the first frame.
+    if (ref.read(currentUserProvider) == null) {
+      context.go(AppRoutes.welcome);
+      return;
+    }
+
+    final sync = ref.read(accountSyncProvider);
+    if (ref.read(storedProfileProvider) != null) {
+      // Signed in with a profile on the phone: go straight in and refresh it
+      // from the account in the background.
+      unawaited(sync.restoreProfile());
+      context.go(AppRoutes.today);
+      return;
+    }
+
+    // Signed in but nothing on the phone, e.g. after a reinstall. Look on the
+    // account before sending a returning user through onboarding again.
+    final hasProfile = await sync
+        .restoreProfile()
+        .timeout(_restoreTimeout, onTimeout: () => false);
+    if (!mounted) return;
+    context.go(hasProfile ? AppRoutes.today : AppRoutes.onboarding);
   }
+
+  static const _restoreTimeout = Duration(seconds: 8);
 
   @override
   Widget build(BuildContext context) {

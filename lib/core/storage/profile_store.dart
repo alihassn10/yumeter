@@ -17,9 +17,15 @@ class ProfileStore {
   final SharedPreferences _prefs;
 
   static const _answersKey = 'profile.answers';
+  static const _pendingKey = 'profile.pending';
 
   Future<void> save(OnboardingAnswers answers) =>
       _prefs.setString(_answersKey, jsonEncode(answers.toJson()));
+
+  /// True while the stored answers have not reached the account yet.
+  bool get pending => _prefs.getBool(_pendingKey) ?? false;
+
+  Future<void> setPending(bool value) => _prefs.setBool(_pendingKey, value);
 
   /// Returns null when nothing is stored, or when the stored value cannot be
   /// read — a corrupt profile should send the user through onboarding again
@@ -36,7 +42,10 @@ class ProfileStore {
     }
   }
 
-  Future<void> clear() => _prefs.remove(_answersKey);
+  Future<void> clear() async {
+    await _prefs.remove(_answersKey);
+    await _prefs.remove(_pendingKey);
+  }
 }
 
 final profileStoreProvider = Provider<ProfileStore>(

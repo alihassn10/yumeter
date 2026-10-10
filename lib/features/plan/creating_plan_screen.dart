@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/app_routes.dart';
-import '../../core/storage/profile_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimens.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/calorie_ring.dart';
+import '../auth/data/account_sync.dart';
 import '../onboarding/state/onboarding_controller.dart';
 
 /// One line of the setup checklist.
@@ -58,7 +58,7 @@ class _CreatingPlanScreenState extends ConsumerState<CreatingPlanScreen> {
   Future<void> _run() async {
     // Persist first: if anything below is interrupted the answers are safe.
     final answers = ref.read(onboardingControllerProvider).answers;
-    await ref.read(profileStoreProvider).save(answers);
+    await ref.read(accountSyncProvider).saveProfile(answers);
 
     for (var i = 1; i <= _stages.length; i++) {
       await Future<void>.delayed(CreatingPlanScreen.stageDuration);
