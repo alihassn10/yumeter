@@ -163,3 +163,46 @@ class _LogButton extends StatelessWidget {
     );
   }
 }
+
+/// Holds every tab's navigator at once, so each keeps its stack and scroll
+/// position, and cross-fades to the selected one instead of cutting.
+///
+/// Hidden tabs ignore touches, are left out of the accessibility tree and
+/// pause their animations. With reduced motion turned on, the switch is
+/// instant.
+class FadingBranches extends StatelessWidget {
+  const FadingBranches({
+    super.key,
+    required this.currentIndex,
+    required this.children,
+  });
+
+  final int currentIndex;
+  final List<Widget> children;
+
+  static const _duration = Duration(milliseconds: 220);
+
+  @override
+  Widget build(BuildContext context) {
+    final duration =
+        MediaQuery.disableAnimationsOf(context) ? Duration.zero : _duration;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        for (final (i, child) in children.indexed)
+          AnimatedOpacity(
+            opacity: i == currentIndex ? 1 : 0,
+            duration: duration,
+            curve: Curves.easeOut,
+            child: IgnorePointer(
+              ignoring: i != currentIndex,
+              child: ExcludeSemantics(
+                excluding: i != currentIndex,
+                child: TickerMode(enabled: i == currentIndex, child: child),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

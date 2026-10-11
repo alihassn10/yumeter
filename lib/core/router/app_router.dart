@@ -58,9 +58,11 @@ final appRouter = GoRouter(
       builder: (_, _) => const PaywallScreen(),
     ),
 
-    // The four tabs, each with its own back stack.
-    StatefulShellRoute.indexedStack(
+    // The four tabs, each with its own back stack, cross-fading on switch.
+    StatefulShellRoute(
       builder: (_, _, shell) => HomeShell(navigationShell: shell),
+      navigatorContainerBuilder: (_, shell, children) =>
+          FadingBranches(currentIndex: shell.currentIndex, children: children),
       branches: [
         StatefulShellBranch(
           routes: [
