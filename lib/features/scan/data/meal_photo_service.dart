@@ -20,6 +20,9 @@ enum AnalysisFailureKind {
   /// No connection, so neither the upload nor the analysis can run.
   offline,
 
+  /// The user has used today's photo analyses; other logging still works.
+  dailyLimit,
+
   /// Anything else on the server side.
   failed,
 }
@@ -110,7 +113,11 @@ class SupabaseMealPhotoService implements MealPhotoService {
       return MealDraft.fromAnalysis(data);
     } on FunctionException catch (e) {
       throw AnalysisFailure(switch (e.status) {
+        // FunctionsFetchException: the request never got an answer.
+        0 => AnalysisFailureKind.offline,
         422 => AnalysisFailureKind.notFood,
+        429 when _code(e.details) == 'daily_limit' =>
+          AnalysisFailureKind.dailyLimit,
         429 || 503 => AnalysisFailureKind.rateLimited,
         _ => AnalysisFailureKind.failed,
       });
@@ -120,6 +127,12 @@ class SupabaseMealPhotoService implements MealPhotoService {
       throw const AnalysisFailure(AnalysisFailureKind.offline);
     }
   }
+
+  /// The `error.code` from a function's JSON error body, if there is one.
+  static String? _code(Object? details) => switch (details) {
+        {'error': {'code': final String code}} => code,
+        _ => null,
+      };
 
   @override
   Future<void> remove(String photoPath) async {

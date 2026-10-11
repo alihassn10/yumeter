@@ -191,6 +191,7 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
                 onRetry: _analyze,
                 onRetake: () => context.pop(),
                 onTypeItIn: () => context.pushReplacement(AppRoutes.quickAdd),
+                onSearch: () => context.pushReplacement(AppRoutes.foodSearch),
               )
             else if (draft == null)
               const _Analyzing()
@@ -346,9 +347,11 @@ class _FailureCard extends StatelessWidget {
     required this.onRetry,
     required this.onRetake,
     required this.onTypeItIn,
+    required this.onSearch,
   });
 
   final AnalysisFailureKind kind;
+  final VoidCallback onSearch;
   final VoidCallback onRetry;
   final VoidCallback onRetake;
   final VoidCallback onTypeItIn;
@@ -373,6 +376,11 @@ class _FailureCard extends StatelessWidget {
           'Something went wrong',
           'The photo could not be analysed. Try again.',
         ),
+      AnalysisFailureKind.dailyLimit => (
+          'Daily photo limit reached',
+          'You have used today\'s photo analyses. They reset at midnight UTC. '
+              'Search, barcode scanning and typing a meal in still work.',
+        ),
     };
 
     return Container(
@@ -388,13 +396,21 @@ class _FailureCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(body, style: AppTypography.bodyMedium),
           const SizedBox(height: AppSpacing.lg),
-          if (kind == AnalysisFailureKind.notFood)
-            ElevatedButton(
-              onPressed: onRetake,
-              child: const Text('Take another photo'),
-            )
-          else
-            ElevatedButton(onPressed: onRetry, child: const Text('Try again')),
+          switch (kind) {
+            AnalysisFailureKind.notFood => ElevatedButton(
+                onPressed: onRetake,
+                child: const Text('Take another photo'),
+              ),
+            // Retrying cannot help until tomorrow; point to what still works.
+            AnalysisFailureKind.dailyLimit => ElevatedButton(
+                onPressed: onSearch,
+                child: const Text('Search food'),
+              ),
+            _ => ElevatedButton(
+                onPressed: onRetry,
+                child: const Text('Try again'),
+              ),
+          },
           const SizedBox(height: AppSpacing.sm),
           OutlinedButton(
             onPressed: onTypeItIn,

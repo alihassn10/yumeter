@@ -27,8 +27,13 @@ class SupabaseAccountRemote implements AccountRemote {
   Future<void> deleteAccount() async {
     try {
       await _client.functions.invoke('delete-account');
-    } on FunctionException {
-      throw const AccountDeletionException(AccountDeletionFailure.failed);
+    } on FunctionException catch (e) {
+      // Status 0 is FunctionsFetchException: no answer, so most likely offline.
+      throw AccountDeletionException(
+        e.status == 0
+            ? AccountDeletionFailure.offline
+            : AccountDeletionFailure.failed,
+      );
     } on Exception {
       throw const AccountDeletionException(AccountDeletionFailure.offline);
     }

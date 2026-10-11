@@ -80,6 +80,10 @@ void main() {
           builder: (_, _) => const Scaffold(body: Text('quick add')),
         ),
         GoRoute(
+          path: AppRoutes.foodSearch,
+          builder: (_, _) => const Scaffold(body: Text('food search')),
+        ),
+        GoRoute(
           path: AppRoutes.mealResult,
           builder: (_, state) =>
               MealResultScreen(photo: state.extra! as PickedPhoto),
@@ -181,6 +185,21 @@ void main() {
 
     expect(find.text('Salmon bowl'), findsOneWidget);
     expect(photos.uploads, hasLength(1));
+  });
+
+  testWidgets('the daily limit points to logging that needs no photo',
+      (tester) async {
+    await pumpResult(tester, [
+      const AnalysisFailure(AnalysisFailureKind.dailyLimit),
+    ]);
+
+    expect(find.text('Daily photo limit reached'), findsOneWidget);
+    expect(find.text('Try again'), findsNothing);
+    await tester.tap(find.text('Search food'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('food search'), findsOneWidget);
+    expect(photos.removed, photos.uploads, reason: 'unused photo deleted');
   });
 
   testWidgets('offline points to typing the meal in', (tester) async {

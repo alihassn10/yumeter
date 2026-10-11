@@ -12,6 +12,10 @@ import { estimateMeal, ProviderError, type RawEstimate } from './gemini.ts'
 
 const BUCKET = 'meal-photos'
 
+// Photos a user may analyse per UTC day. Several meals a day with room for
+// retakes; override with the DAILY_PHOTO_LIMIT secret without redeploying.
+const DEFAULT_DAILY_LIMIT = 20
+
 // Matches the bucket's allowed types; used when storage reports no type.
 const MIME_BY_EXTENSION: Record<string, string> = {
   jpg: 'image/jpeg',
@@ -105,11 +109,38 @@ export default {
       return error(415, 'unsupported_image', 'Use a JPEG, PNG, WebP or HEIC photo.')
     }
 
+    // Claimed only now, so a malformed request never spends allowance.
+    const configured = Number(Deno.env.get('DAILY_PHOTO_LIMIT'))
+    const limit = Number.isInteger(configured) && configured > 0 ? configured : DEFAULT_DAILY_LIMIT
+    const { data: allowed, error: claimError } = await ctx.supabaseAdmin.rpc('claim_analysis', {
+      p_user: userId,
+      daily_limit: limit,
+    })
+    if (claimError) {
+      // Fail closed: without the counter there is no way to protect the quota.
+      console.error('analyze-meal: claiming allowance failed', claimError.message)
+      return error(503, 'busy', 'Photo analysis is busy right now. Try again shortly.')
+    }
+    if (allowed !== true) {
+      const now = new Date()
+      const midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+      const seconds = Math.ceil((midnight - now.getTime()) / 1000)
+      return error(
+        429,
+        'daily_limit',
+        `You have used today's ${limit} photo analyses.`,
+        { 'Retry-After': `${seconds}` },
+      )
+    }
+
     let raw: RawEstimate
     try {
       raw = await estimateMeal(new Uint8Array(await blob.arrayBuffer()), mimeType)
     } catch (e) {
       console.error('analyze-meal provider failure', e instanceof Error ? e.message : e)
+      // The user got nothing, so the attempt does not count.
+      const { error: refundError } = await ctx.supabaseAdmin.rpc('refund_analysis', { p_user: userId })
+      if (refundError) console.error('analyze-meal: refund failed', refundError.message)
       if (e instanceof ProviderError && e.kind === 'rateLimited') {
         return error(
           429,
