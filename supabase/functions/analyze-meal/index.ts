@@ -109,7 +109,8 @@ export default {
     try {
       raw = await estimateMeal(new Uint8Array(await blob.arrayBuffer()), mimeType)
     } catch (e) {
-      if (e instanceof ProviderError && e.rateLimited) {
+      console.error('analyze-meal provider failure', e instanceof Error ? e.message : e)
+      if (e instanceof ProviderError && e.kind === 'rateLimited') {
         return error(
           429,
           'rate_limited',
@@ -117,7 +118,9 @@ export default {
           e.retryAfter ? { 'Retry-After': e.retryAfter } : undefined,
         )
       }
-      console.error('analyze-meal provider failure', e instanceof Error ? e.message : e)
+      if (e instanceof ProviderError && e.kind === 'busy') {
+        return error(503, 'busy', 'Photo analysis is busy right now. Try again shortly.')
+      }
       return error(502, 'analysis_failed', 'The photo could not be analysed. Try again.')
     }
 

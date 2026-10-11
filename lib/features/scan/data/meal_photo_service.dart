@@ -13,7 +13,8 @@ enum AnalysisFailureKind {
   /// The model found no food or drink in the photo.
   notFood,
 
-  /// The free vision tier is busy; trying again shortly works.
+  /// The vision service is rate-limited or overloaded; trying again shortly
+  /// usually works.
   rateLimited,
 
   /// No connection, so neither the upload nor the analysis can run.
@@ -106,7 +107,7 @@ class SupabaseMealPhotoService implements MealPhotoService {
     } on FunctionException catch (e) {
       throw AnalysisFailure(switch (e.status) {
         422 => AnalysisFailureKind.notFood,
-        429 => AnalysisFailureKind.rateLimited,
+        429 || 503 => AnalysisFailureKind.rateLimited,
         _ => AnalysisFailureKind.failed,
       });
     } on AnalysisFailure {

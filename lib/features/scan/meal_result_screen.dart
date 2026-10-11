@@ -363,7 +363,7 @@ class _FailureCard extends StatelessWidget {
         ),
       AnalysisFailureKind.rateLimited => (
           'Busy right now',
-          'Lots of photos are being analysed. Try again in a minute.',
+          'Photo analysis is busy right now. Try again in a minute.',
         ),
       AnalysisFailureKind.offline => (
           'You are offline',

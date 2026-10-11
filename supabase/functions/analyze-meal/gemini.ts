@@ -4,8 +4,17 @@
 import { encodeBase64 } from 'jsr:@std/encoding@1.0.11/base64'
 
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/interactions'
-const DEFAULT_MODEL = 'gemini-3.8-flash'
-const TIMEOUT_MS = 30_000
+
+// Tried in order. The free tier sheds load per model ("high demand" 503s)
+// and keeps a separate quota per model, so when one is unavailable the next
+// usually answers. Override with a comma-separated GEMINI_MODELS secret.
+const DEFAULT_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']
+
+// One slow model must not eat the whole budget, and the user should hear back
+// within about a minute either way.
+const ATTEMPT_TIMEOUT_MS = 25_000
+const DEADLINE_MS = 55_000
+const MIN_ATTEMPT_MS = 5_000
 
 /** What the model is asked to return, before any server-side clean-up. */
 export interface RawEstimate {
@@ -21,13 +30,21 @@ export interface RawEstimate {
   }[]
 }
 
+/**
+ * Why the provider gave no estimate. `rateLimited` and `busy` are temporary
+ * and tell the app to offer a retry; anything else is a plain failure.
+ */
 export class ProviderError extends Error {
   constructor(
     message: string,
-    readonly rateLimited = false,
+    readonly kind: 'rateLimited' | 'busy' | 'failed' = 'failed',
     readonly retryAfter: string | null = null,
   ) {
     super(message)
+  }
+
+  get temporary() {
+    return this.kind !== 'failed'
   }
 }
 
@@ -71,41 +88,74 @@ export async function estimateMeal(image: Uint8Array, mimeType: string): Promise
   const apiKey = Deno.env.get('GEMINI_API_KEY')
   if (!apiKey) throw new ProviderError('GEMINI_API_KEY is not set')
 
+  const configured = Deno.env.get('GEMINI_MODELS') ?? Deno.env.get('GEMINI_MODEL')
+  const models = configured
+    ? configured.split(',').map((m) => m.trim()).filter(Boolean)
+    : DEFAULT_MODELS
+
+  const data = encodeBase64(image)
+  const deadline = Date.now() + DEADLINE_MS
+  let last: ProviderError | undefined
+
+  for (const model of models) {
+    const remaining = deadline - Date.now()
+    if (remaining < MIN_ATTEMPT_MS) break
+    try {
+      return await attempt(apiKey, model, data, mimeType, Math.min(ATTEMPT_TIMEOUT_MS, remaining))
+    } catch (e) {
+      // A bad key or a malformed request fails the same way on every model.
+      if (!(e instanceof ProviderError) || !e.temporary) throw e
+      console.warn(`analyze-meal: ${model} unavailable, trying the next model. ${e.message}`)
+      last = e
+    }
+  }
+  throw last ?? new ProviderError('No Gemini model was available in time', 'busy')
+}
+
+async function attempt(
+  apiKey: string,
+  model: string,
+  data: string,
+  mimeType: string,
+  timeoutMs: number,
+): Promise<RawEstimate> {
   let res: Response
   try {
     res = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: Deno.env.get('GEMINI_MODEL') ?? DEFAULT_MODEL,
+        model,
         system_instruction: SYSTEM_INSTRUCTION,
         input: [
           { type: 'text', text: 'Estimate the nutrition of this meal.' },
-          { type: 'image', data: encodeBase64(image), mime_type: mimeType },
+          { type: 'image', data, mime_type: mimeType },
         ],
         response_format: { type: 'text', mime_type: 'application/json', schema: RESPONSE_SCHEMA },
         generation_config: { thinking_level: 'low' },
         // Users' meal photos are not kept on Google's side for later retrieval.
         store: false,
       }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     })
   } catch (e) {
-    throw new ProviderError(`Gemini request failed: ${e instanceof Error ? e.message : e}`)
+    // Timed out or the connection dropped: worth trying another model.
+    throw new ProviderError(`${model} request failed: ${e instanceof Error ? e.message : e}`, 'busy')
   }
 
   if (res.status === 429) {
-    throw new ProviderError('Gemini rate limit reached', true, res.headers.get('retry-after'))
+    throw new ProviderError(`${model} rate limit reached`, 'rateLimited', res.headers.get('retry-after'))
   }
   if (!res.ok) {
     // The body carries Google's error message, never the image.
     const detail = (await res.text()).slice(0, 500)
-    throw new ProviderError(`Gemini returned ${res.status}: ${detail}`)
+    const kind = res.status >= 500 ? 'busy' : 'failed'
+    throw new ProviderError(`${model} returned ${res.status}: ${detail}`, kind)
   }
 
   const interaction = await res.json()
   if (interaction.status !== 'completed') {
-    throw new ProviderError(`Gemini interaction ended as ${interaction.status}`)
+    throw new ProviderError(`${model} interaction ended as ${interaction.status}`, 'busy')
   }
 
   const text = (interaction.steps ?? [])
@@ -118,6 +168,6 @@ export async function estimateMeal(image: Uint8Array, mimeType: string): Promise
   try {
     return JSON.parse(text) as RawEstimate
   } catch {
-    throw new ProviderError('Gemini returned output that is not JSON')
+    throw new ProviderError(`${model} returned output that is not JSON`, 'busy')
   }
 }
