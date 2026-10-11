@@ -48,7 +48,14 @@ void main() {
     expect(find.text('165 cm'), findsOneWidget);
     expect(find.text('Female'), findsOneWidget);
     expect(find.text('Moderately active'), findsOneWidget);
+    // The disclaimer closes the list, below the fold.
+    await tester.scrollUntilVisible(
+      find.textContaining('not give medical advice'),
+      300,
+    );
     expect(find.textContaining('not give medical advice'), findsOneWidget);
+    expect(find.text('Privacy policy'), findsOneWidget);
+    expect(find.text('Terms of use'), findsOneWidget);
   });
 
   testWidgets('the calorie target explains how it was worked out',
