@@ -6,7 +6,7 @@ This policy explains what Yumeter collects, why, who else handles it, and how yo
 
 ## What we collect
 
-**Your account.** Your email address, used to sign you in with a one-time code. We never ask for a password.
+**Your account.** Your email address, used to sign you in with a one-time code. If you choose to sign in with Google instead, Google shares your email address and an account identifier with us; we do not receive your Google password. We never ask for a password.
 
 **Your profile.** The answers you give when setting up your plan: sex, birth date, height, weight, activity level, goal, target weight, weekly pace, how you like to eat, and whether you use metric or imperial units. Some of this is information about your health.
 
@@ -33,6 +33,7 @@ We use your data because you asked us to provide the service. Where we process h
 We use a small number of providers to run Yumeter. Each handles only what it needs:
 
 - **Supabase** hosts our database, sign-in, photo storage and server functions, in [REGION]. Everything listed under "What we collect" is stored there.
+- **Google Sign-In**, if you use it, confirms your Google account to us. Google's own privacy policy covers what it does when you sign in.
 - **Google (Gemini API)** receives a meal photo when you ask for an estimate, and returns the estimate. We ask Google not to store the photo for later retrieval. [WHILE ON GEMINI'S FREE TIER: Google may use content sent through its free tier to improve its products. Remove this sentence once a paid tier is in use.]
 - **Our email provider** ([EMAIL PROVIDER]) sends your sign-in codes and receives your email address to do so.
 - **Open Food Facts**, a public food database, receives what you type into food search and the barcodes you scan. These requests come from your device and are not linked to your Yumeter account.

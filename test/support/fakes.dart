@@ -50,6 +50,17 @@ class FakeAuthRepository implements AuthRepository {
     return signInAs;
   }
 
+  /// What [signInWithGoogle] does: sign in as [signInAs] unless set to throw.
+  Exception? googleError;
+
+  @override
+  Future<AuthUser> signInWithGoogle() async {
+    if (googleError case final e?) throw e;
+    user = signInAs;
+    _changes.add(user);
+    return signInAs;
+  }
+
   @override
   Future<void> signOut() async {
     user = null;

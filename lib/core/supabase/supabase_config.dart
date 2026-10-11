@@ -17,6 +17,15 @@ abstract final class SupabaseConfig {
     'SUPABASE_KEY',
     defaultValue: 'sb_publishable_m9aS6znLcFfGlUrqZSZoUg_jqlOoqDz',
   );
+
+  /// The Google OAuth *web* client, which Google signs ID tokens for and
+  /// Supabase checks them against. Client IDs are public by design; the
+  /// client secret lives only in the Supabase dashboard.
+  static const googleWebClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+    defaultValue:
+        '609463770262-9ofu996r2jvkbr471lupj9h166cug6m4.apps.googleusercontent.com',
+  );
 }
 
 /// Initialised in `main` and overridden there; tests override the

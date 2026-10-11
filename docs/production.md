@@ -75,7 +75,29 @@ To move to another provider instead, replace
 4. Authentication → Rate Limits: check the email limit suits your volume.
 5. Put the service's name in the privacy policy (`[EMAIL PROVIDER]`).
 
-## 6. Legal pages (you)
+## 6. Google sign-in (you)
+
+The Google Cloud project `Yumeter` already has a **Web** client (used by
+Supabase) and an **Android** client registered for package `com.yumeter.app`
+with the debug key's SHA-1, which covers test builds. For releases:
+
+1. Google Cloud → Google Auth Platform → Clients: add two more **Android**
+   clients for `com.yumeter.app` (or more SHA-1s to the existing one), with:
+   - the upload key's SHA-1 (step 8, then `keytool -list -v -keystore
+     %USERPROFILE%\yumeter-upload.jks -alias upload`);
+   - Google Play's app signing key SHA-1, from Play Console → Test and
+     release → App integrity, once the app exists in Play Console.
+2. Google Auth Platform → Audience: publish the consent screen to
+   **Production** (it starts in Testing, limited to listed test users).
+3. In the production Supabase project, Authentication → Sign In / Providers →
+   Google: enable, paste the Web client ID and secret, put every client ID in
+   **Client IDs** separated by commas with the **Web** one first, and turn on
+   **Skip nonce check**, as Supabase's Flutter guide says.
+4. iOS needs its own iOS client, its URL scheme in `ios/Runner/Info.plist`,
+   and Sign in with Apple alongside it (App Store guideline 4.8). Until then
+   the app offers Google on Android only.
+
+## 7. Legal pages (you)
 
 Fill the placeholders in `assets/legal/privacy_policy.md` and
 `assets/legal/terms_of_use.md`: `[DEVELOPER NAME]`, `[CONTACT EMAIL]`,
@@ -83,7 +105,7 @@ Fill the placeholders in `assets/legal/privacy_policy.md` and
 qualified before launch. Publish the privacy policy at a public URL too; both
 stores ask for one in the listing.
 
-## 7. Android signing key (you)
+## 8. Android signing key (you)
 
 Play signs the published app with its own key; you sign uploads with an
 upload key. Create it once and keep it, and its passwords, safe and backed
@@ -106,7 +128,7 @@ storeFile=C:\\Users\\<you>\\yumeter-upload.jks
 With that file present, release builds sign with the upload key; without it
 they fall back to the debug key, which Play rejects.
 
-## 8. Build a release
+## 9. Build a release
 
 The app talks to `yumeter-dev` unless told otherwise. Always pass the
 production values:
@@ -118,7 +140,7 @@ flutter build appbundle --release --dart-define=SUPABASE_URL=https://<prod-ref>.
 `SUPPORT_EMAIL` goes into the User-Agent Open Food Facts asks every app to
 send, so they can reach you about API use.
 
-## 9. Before submitting
+## 10. Before submitting
 
 - Sign in with a fresh email on a real device against production, run
   onboarding, log by photo, barcode, search and quick add, then delete the

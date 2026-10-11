@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../../../core/supabase/supabase_config.dart';
@@ -23,10 +25,15 @@ class AuthFailure implements Exception {
   String toString() => message;
 }
 
-/// Passwordless email sign-in: the user asks for a code, then types it in.
+/// The user backed out of a sign-in, which is not an error to show.
+class AuthCancelled implements Exception {
+  const AuthCancelled();
+}
+
+/// Sign-in without passwords: an emailed one-time code, or a Google account.
 ///
-/// A code rather than a magic link keeps sign-in inside the app, with no deep
-/// links to configure per platform.
+/// A code rather than a magic link keeps email sign-in inside the app, with no
+/// deep links to configure per platform.
 abstract interface class AuthRepository {
   AuthUser? get currentUser;
 
@@ -37,6 +44,10 @@ abstract interface class AuthRepository {
   Future<void> sendCode(String email);
 
   Future<AuthUser> verifyCode({required String email, required String code});
+
+  /// Signs in with the Google account chosen in the system picker. Throws
+  /// [AuthCancelled] if the user closes the picker.
+  Future<AuthUser> signInWithGoogle();
 
   Future<void> signOut();
 }
@@ -74,14 +85,67 @@ class SupabaseAuthRepository implements AuthRepository {
         return user;
       });
 
+  bool _googleReady = false;
+
+  /// Native Google sign-in: Android's account picker returns an ID token for
+  /// the web client, which Supabase verifies and turns into a session.
+  /// Google recognises the app itself by package name and signing-key SHA-1,
+  /// so the Android client ID never appears in code.
   @override
-  Future<void> signOut() => _auth.signOut();
+  Future<AuthUser> signInWithGoogle() => _guard(() async {
+        final google = GoogleSignIn.instance;
+        try {
+          if (!_googleReady) {
+            await google.initialize(serverClientId: SupabaseConfig.googleWebClientId);
+            _googleReady = true;
+          }
+          final account = await google.authenticate();
+          final idToken = account.authentication.idToken;
+          if (idToken == null) {
+            throw const AuthFailure('Google did not finish signing in. Try again.');
+          }
+          final res = await _auth.signInWithIdToken(
+            provider: sb.OAuthProvider.google,
+            idToken: idToken,
+          );
+          final user = _map(res.user);
+          if (user == null) {
+            throw const AuthFailure('Google did not finish signing in. Try again.');
+          }
+          return user;
+        } on GoogleSignInException catch (e) {
+          if (e.code == GoogleSignInExceptionCode.canceled ||
+              e.code == GoogleSignInExceptionCode.interrupted) {
+            throw const AuthCancelled();
+          }
+          debugPrint('Google sign-in failed: ${e.code} ${e.description}');
+          throw const AuthFailure(
+            'Google sign-in is not available right now. Use email instead.',
+          );
+        }
+      });
+
+  @override
+  Future<void> signOut() async {
+    // Also forget the Google account, so the next sign-in offers the picker
+    // instead of silently reusing whoever signed in last.
+    if (_googleReady) {
+      try {
+        await GoogleSignIn.instance.signOut();
+      } on Exception catch (e) {
+        debugPrint('Google sign-out failed: $e');
+      }
+    }
+    await _auth.signOut();
+  }
 
   /// Turns Supabase errors into messages fit to show on screen.
   Future<T> _guard<T>(Future<T> Function() run) async {
     try {
       return await run();
     } on AuthFailure {
+      rethrow;
+    } on AuthCancelled {
       rethrow;
     } on sb.AuthException catch (e) {
       throw AuthFailure(_messageFor(e));

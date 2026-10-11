@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/app_routes.dart';
@@ -9,11 +11,45 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/accent_badge.dart';
 import '../../core/widgets/brand_mark.dart';
 import '../../core/widgets/macro_stat.dart';
+import '../auth/data/account_sync.dart';
+import '../auth/data/auth_repository.dart';
 
 /// First screen a new user sees: the pitch, a sample of what the app produces,
 /// and the three sign-in routes.
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
+
+  /// Google sign-in is wired for Android only so far: iOS needs its own
+  /// OAuth client, and Apple requires Sign in with Apple alongside it.
+  static bool get googleAvailable =>
+      defaultTargetPlatform == TargetPlatform.android;
+
+  @override
+  ConsumerState<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
+  bool _googleBusy = false;
+
+  Future<void> _signInWithGoogle() async {
+    if (_googleBusy) return;
+    setState(() => _googleBusy = true);
+    try {
+      final user = await ref.read(authRepositoryProvider).signInWithGoogle();
+      final hasProfile = await ref.read(accountSyncProvider).signedIn(user);
+      if (!mounted) return;
+      context.go(hasProfile ? AppRoutes.today : AppRoutes.onboarding);
+    } on AuthCancelled {
+      // Closing the picker is a choice, not an error.
+    } on AuthFailure catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(e.message)));
+    } finally {
+      if (mounted) setState(() => _googleBusy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +96,19 @@ class WelcomeScreen extends StatelessWidget {
               _SignInButton(
                 icon: Icons.apple,
                 label: 'Continue with Apple',
-                filled: true,
+                // The working provider gets the highlight.
+                filled: !WelcomeScreen.googleAvailable,
                 onPressed: () => _notYetAvailable(context, 'Apple'),
               ),
               const SizedBox(height: AppSpacing.md),
               _SignInButton(
                 icon: Icons.g_mobiledata_rounded,
                 label: 'Continue with Google',
-                onPressed: () => _notYetAvailable(context, 'Google'),
+                filled: WelcomeScreen.googleAvailable,
+                busy: _googleBusy,
+                onPressed: WelcomeScreen.googleAvailable
+                    ? _signInWithGoogle
+                    : () => _notYetAvailable(context, 'Google'),
               ),
               const SizedBox(height: AppSpacing.md),
               _SignInButton(
@@ -87,8 +128,8 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  // TODO(auth): Apple and Google sign-in. Apple's guideline 4.8 requires the
-  // Apple option whenever Google sign-in ships.
+  // TODO(auth): Sign in with Apple, and Google on iOS. Apple's guideline 4.8
+  // requires the Apple option wherever Google sign-in ships on iOS.
   void _notYetAvailable(BuildContext context, String provider) =>
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -149,21 +190,32 @@ class _SignInButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.filled = false,
+    this.busy = false,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onPressed;
 
+  /// Shows progress in place of the icon and ignores taps meanwhile.
+  final bool busy;
+
   /// The primary provider gets the light fill; the rest stay neutral.
   final bool filled;
 
   @override
   Widget build(BuildContext context) {
+    final leading = busy
+        ? const SizedBox.square(
+            dimension: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : Icon(icon);
+    final onTap = busy ? null : onPressed;
     if (filled) {
       return ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon),
+        onPressed: onTap,
+        icon: leading,
         label: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.textPrimary,
@@ -172,8 +224,8 @@ class _SignInButton extends StatelessWidget {
       );
     }
     return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon),
+      onPressed: onTap,
+      icon: leading,
       label: Text(label),
     );
   }
