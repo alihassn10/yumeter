@@ -7,7 +7,7 @@
          takes stills, so drop it rather than prompt for something unused. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove"/>
     <application
-        android:label="yumeter"
+        android:label="Yumeter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
