@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -43,12 +44,33 @@ class SupabaseMealRemote implements MealRemote {
     await _client.from('meals').upsert([for (final e in entries) mealToRow(e)]);
   }
 
+  /// Deletes the rows, then their photos. Storage objects cannot be removed
+  /// from SQL, so the photo goes here, using the paths the delete returns.
   @override
   Future<void> delete(List<String> ids) async {
     if (ids.isEmpty) return;
-    await _client.from('meals').delete().inFilter('id', ids);
+    final deleted = await _client
+        .from('meals')
+        .delete()
+        .inFilter('id', ids)
+        .select('photo_path');
+    final photos = [
+      for (final row in deleted)
+        if (row['photo_path'] case final String path) path,
+    ];
+    if (photos.isEmpty) return;
+    try {
+      await _client.storage.from(mealPhotosBucket).remove(photos);
+    } on Exception catch (e) {
+      // The meal is gone either way; a stray photo is only wasted storage
+      // and must not hold up the rest of the queue.
+      debugPrint('Could not remove meal photos $photos: $e');
+    }
   }
 }
+
+/// Private bucket of meal photos, one folder per user id.
+const mealPhotosBucket = 'meal-photos';
 
 /// The `meals` row for [entry]. `user_id` is left to the column default,
 /// `auth.uid()`, so the app never claims an owner itself.
@@ -56,10 +78,12 @@ class SupabaseMealRemote implements MealRemote {
 /// Times go over the wire in UTC: the device's local wall-clock time has no
 /// offset and would otherwise be read as UTC and shift by the time zone.
 ///
-/// The name is fitted to the table's 1–200 character check, because one row
-/// the database rejects fails the whole batch and would stall the queue.
+/// Every value is fitted to the table's checks (name 1–200 characters,
+/// calories up to 20,000, macros up to 2,000 g), because one row the database
+/// rejects fails the whole batch and would stall the queue.
 Map<String, dynamic> mealToRow(MealEntry entry) {
   final name = entry.name.trim();
+  int fit(int value, int max) => value.clamp(0, max);
   return {
     'id': entry.id,
     'logged_at': entry.loggedAt.toUtc().toIso8601String(),
@@ -67,11 +91,12 @@ Map<String, dynamic> mealToRow(MealEntry entry) {
     'name': name.isEmpty
         ? 'Meal'
         : name.substring(0, name.length < 200 ? name.length : 200),
-    'calories': entry.calories,
-    'protein_grams': entry.proteinGrams,
-    'carb_grams': entry.carbGrams,
-    'fat_grams': entry.fatGrams,
+    'calories': fit(entry.calories, 20000),
+    'protein_grams': fit(entry.proteinGrams, 2000),
+    'carb_grams': fit(entry.carbGrams, 2000),
+    'fat_grams': fit(entry.fatGrams, 2000),
     'source': entry.source.name,
+    'photo_path': entry.photoPath,
   };
 }
 
@@ -90,6 +115,7 @@ MealEntry? mealFromRow(Map<String, dynamic> row) {
     'carbGrams': row['carb_grams'],
     'fatGrams': row['fat_grams'],
     'source': row['source'],
+    'photoPath': row['photo_path'],
   });
 }
 

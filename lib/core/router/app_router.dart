@@ -10,6 +10,9 @@ import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/paywall/paywall_screen.dart';
 import '../../features/plan/creating_plan_screen.dart';
 import '../../features/plan/plan_reveal_screen.dart';
+import '../../features/scan/domain/picked_photo.dart';
+import '../../features/scan/meal_result_screen.dart';
+import '../../features/scan/scan_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
@@ -94,9 +97,20 @@ final appRouter = GoRouter(
         initialType: _mealTypeFrom(state.uri.queryParameters['meal']),
       ),
     ),
+    GoRoute(
+      path: AppRoutes.scan,
+      builder: (_, _) => const ScanScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.mealResult,
+      // The photo travels as `extra`; without one (a restored or typed URL)
+      // there is nothing to review, so start from the camera.
+      redirect: (_, state) =>
+          state.extra is PickedPhoto ? null : AppRoutes.scan,
+      builder: (_, state) =>
+          MealResultScreen(photo: state.extra! as PickedPhoto),
+    ),
     for (final (path, title) in const [
-      (AppRoutes.scan, 'Scan'),
-      (AppRoutes.mealResult, 'Meal result'),
       (AppRoutes.foodSearch, 'Food search'),
       (AppRoutes.barcodeResult, 'Barcode result'),
       (AppRoutes.deleteAccount, 'Delete account'),

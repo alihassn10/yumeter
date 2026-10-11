@@ -113,7 +113,10 @@ class MealLogController extends Notifier<List<MealEntry>> {
     await _store.save(state);
   }
 
+  /// Logs a new meal. [id] is for a photo meal, whose photo was uploaded under
+  /// the meal's id before the meal existed; otherwise one is generated.
   Future<MealEntry> add({
+    String? id,
     required MealType type,
     required String name,
     required int calories,
@@ -122,9 +125,10 @@ class MealLogController extends Notifier<List<MealEntry>> {
     int carbGrams = 0,
     int fatGrams = 0,
     MealSource source = MealSource.quickAdd,
+    String? photoPath,
   }) async {
     final entry = MealEntry(
-      id: _uuid.v4(),
+      id: id ?? _uuid.v4(),
       loggedAt: loggedAt,
       type: type,
       name: name,
@@ -133,6 +137,7 @@ class MealLogController extends Notifier<List<MealEntry>> {
       carbGrams: carbGrams,
       fatGrams: fatGrams,
       source: source,
+      photoPath: photoPath,
     );
     await _commit([...state, entry], {entry.id: PendingOp.upsert});
     return entry;

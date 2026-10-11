@@ -37,6 +37,7 @@ class MealEntry {
     this.carbGrams = 0,
     this.fatGrams = 0,
     this.source = MealSource.quickAdd,
+    this.photoPath,
   });
 
   final String id;
@@ -53,6 +54,10 @@ class MealEntry {
 
   final MealSource source;
 
+  /// Where the meal's photo lives in the `meal-photos` bucket, for meals
+  /// logged from a photo.
+  final String? photoPath;
+
   MealEntry copyWith({
     String? id,
     DateTime? loggedAt,
@@ -63,6 +68,7 @@ class MealEntry {
     int? carbGrams,
     int? fatGrams,
     MealSource? source,
+    String? photoPath,
   }) {
     return MealEntry(
       id: id ?? this.id,
@@ -74,6 +80,7 @@ class MealEntry {
       carbGrams: carbGrams ?? this.carbGrams,
       fatGrams: fatGrams ?? this.fatGrams,
       source: source ?? this.source,
+      photoPath: photoPath ?? this.photoPath,
     );
   }
 
@@ -87,6 +94,7 @@ class MealEntry {
         'carbGrams': carbGrams,
         'fatGrams': fatGrams,
         'source': source.name,
+        if (photoPath != null) 'photoPath': photoPath,
       };
 
   /// Returns null for a record too damaged to show, so one bad entry cannot
@@ -121,6 +129,7 @@ class MealEntry {
       carbGrams: grams(json['carbGrams']),
       fatGrams: grams(json['fatGrams']),
       source: byName(MealSource.values, json['source'], MealSource.quickAdd),
+      photoPath: json['photoPath'] is String ? json['photoPath'] as String : null,
     );
   }
 }

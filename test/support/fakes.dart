@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:yumeter/core/storage/profile_remote.dart';
 import 'package:yumeter/features/auth/data/auth_repository.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/meals/domain/meal_entry.dart';
 import 'package:yumeter/features/onboarding/domain/onboarding_answers.dart';
+import 'package:yumeter/features/scan/data/meal_photo_service.dart';
+import 'package:yumeter/features/scan/domain/meal_draft.dart';
 
 const testUser = AuthUser(id: 'user-a', email: 'a@example.test');
 const otherUser = AuthUser(id: 'user-b', email: 'b@example.test');
@@ -81,6 +84,38 @@ class FakeMealRemote implements MealRemote {
     _check();
     ids.forEach(rows.remove);
   }
+}
+
+/// Stands in for storage and the `analyze-meal` function. [results] is
+/// consumed one per analysis, so a test can fail once and then succeed.
+class FakeMealPhotoService implements MealPhotoService {
+  FakeMealPhotoService(this.results);
+
+  final List<Object> results;
+  final uploads = <String>[];
+  final removed = <String>[];
+
+  @override
+  Future<String> upload({
+    required String userId,
+    required String mealId,
+    required Uint8List bytes,
+    required String extension,
+  }) async {
+    final path = '$userId/$mealId.$extension';
+    uploads.add(path);
+    return path;
+  }
+
+  @override
+  Future<MealDraft> analyze(String photoPath) async {
+    final next = results.removeAt(0);
+    if (next is AnalysisFailure) throw next;
+    return next as MealDraft;
+  }
+
+  @override
+  Future<void> remove(String photoPath) async => removed.add(photoPath);
 }
 
 class FakeProfileRemote implements ProfileRemote {

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Yumeter uses the camera to photograph your meals and estimate their calories.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Yumeter lets you pick a meal photo from your library to estimate its calories.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

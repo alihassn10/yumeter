@@ -1,7 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Sign-in and meal sync talk to Supabase. Debug builds get this from
          the debug manifest; release builds need it here. -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- The camera plugin asks for the microphone for video. Yumeter only
+         takes stills, so drop it rather than prompt for something unused. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove"/>
     <application
         android:label="yumeter"
         android:name="${applicationName}"
