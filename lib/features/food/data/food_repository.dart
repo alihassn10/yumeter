@@ -40,8 +40,13 @@ class OpenFoodFactsRepository implements FoodRepository {
   final _barcodes = <String, FoodProduct?>{};
 
   // Open Food Facts asks every app to identify itself as
-  // "AppName/Version (contact)". TODO(launch): add the support email.
-  static const _userAgent = 'Yumeter/1.0 (Android and iOS app)';
+  // "AppName/Version (contact)". Release builds pass the support address
+  // with --dart-define=SUPPORT_EMAIL=... (docs/production.md).
+  static const _contact = String.fromEnvironment(
+    'SUPPORT_EMAIL',
+    defaultValue: 'development build',
+  );
+  static const _userAgent = 'Yumeter/1.0 ($_contact)';
   static const _timeout = Duration(seconds: 12);
 
   static const _fields = 'code,product_name,brands,quantity,serving_size,'

@@ -45,16 +45,11 @@ revoke all on function public.orphaned_meal_photos(interval, integer)
 grant execute on function public.orphaned_meal_photos(interval, integer)
   to service_role;
 
--- Where the job sends its request. The publishable key is the same public key
--- the app ships with; the function itself decides what the call may do.
-select vault.create_secret(
-  'https://qraksxkldrloltzlmhhd.supabase.co',
-  'project_url'
-);
-select vault.create_secret(
-  'sb_publishable_m9aS6znLcFfGlUrqZSZoUg_jqlOoqDz',
-  'publishable_key'
-);
+-- Where the job sends its request comes from Vault, set once per project
+-- (docs/production.md, "Scheduled cleanup"): `project_url` and
+-- `publishable_key`, the same public key the app ships with. They are not
+-- set here because they differ per project, and a value baked into this file
+-- would point every new project's job at the first one.
 
 -- 03:17 UTC daily, off the hour so it does not queue behind other jobs.
 select cron.schedule(
