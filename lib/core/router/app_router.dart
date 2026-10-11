@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/sign_in_screen.dart';
+import '../../features/food/barcode_scan_screen.dart';
+import '../../features/food/food_product_screen.dart';
+import '../../features/food/food_search_screen.dart';
 import '../../features/home/home_shell.dart';
 import '../../features/home/today_screen.dart';
 import '../../features/log/quick_add_screen.dart';
@@ -20,13 +22,9 @@ import '../../features/settings/delete_account_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
-import '../theme/app_dimens.dart';
-import '../theme/app_typography.dart';
 import 'app_routes.dart';
 
-/// The app's route table. Screens are added here as each one is built; the
-/// remaining paths resolve to [_Placeholder] so navigation can be wired and
-/// walked end to end before every screen exists.
+/// The app's route table.
 final appRouter = GoRouter(
   initialLocation: AppRoutes.splash,
   routes: [
@@ -127,11 +125,26 @@ final appRouter = GoRouter(
       path: AppRoutes.deleteAccount,
       builder: (_, _) => const DeleteAccountScreen(),
     ),
-    for (final (path, title) in const [
-      (AppRoutes.foodSearch, 'Food search'),
-      (AppRoutes.barcodeResult, 'Barcode result'),
-    ])
-      GoRoute(path: path, builder: (_, _) => _Placeholder(title: title)),
+    GoRoute(
+      path: AppRoutes.foodSearch,
+      builder: (_, state) => FoodSearchScreen(
+        mealType: _mealTypeFrom(state.uri.queryParameters['meal']),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.barcodeScan,
+      builder: (_, state) => BarcodeScanScreen(
+        mealType: _mealTypeFrom(state.uri.queryParameters['meal']),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.foodProduct,
+      // Without a product (a restored or typed URL) there is nothing to show.
+      redirect: (_, state) =>
+          state.extra is FoodProductArgs ? null : AppRoutes.foodSearch,
+      builder: (_, state) =>
+          FoodProductScreen(args: state.extra! as FoodProductArgs),
+    ),
   ],
 );
 
@@ -144,25 +157,3 @@ MealType? _mealTypeFrom(String? name) {
   return null;
 }
 
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenMargin),
-          child: Text(
-            '$title is not built yet.',
-            textAlign: TextAlign.center,
-            style: AppTypography.bodyMedium,
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -92,7 +92,7 @@ class _LogSheetState extends ConsumerState<LogSheet> {
                     icon: Icons.qr_code_scanner_rounded,
                     title: 'Scan barcode',
                     subtitle: 'Packaged food',
-                    onTap: () => _open(AppRoutes.barcodeResult),
+                    onTap: () => _open(AppRoutes.barcodeScan),
                   ),
                   _MethodTile(
                     icon: Icons.search_rounded,

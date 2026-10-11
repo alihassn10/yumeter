@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:yumeter/core/storage/profile_remote.dart';
 import 'package:yumeter/features/auth/data/account_remote.dart';
 import 'package:yumeter/features/auth/data/auth_repository.dart';
+import 'package:yumeter/features/food/data/food_repository.dart';
+import 'package:yumeter/features/food/domain/food_product.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/meals/domain/meal_entry.dart';
 import 'package:yumeter/features/onboarding/domain/onboarding_answers.dart';
@@ -125,6 +127,31 @@ class FakeMealPhotoService implements MealPhotoService {
   @override
   Future<String> viewUrl(String photoPath) async =>
       throw Exception('offline in tests');
+}
+
+/// Answers searches from [products] by name; set [failure] to fail instead.
+class FakeFoodRepository implements FoodRepository {
+  FakeFoodRepository(this.products);
+
+  final List<FoodProduct> products;
+  FoodLookupFailure? failure;
+  final queries = <String>[];
+
+  @override
+  Future<List<FoodProduct>> search(String query) async {
+    queries.add(query);
+    if (failure case final reason?) throw FoodLookupException(reason);
+    return [
+      for (final p in products)
+        if (p.name.toLowerCase().contains(query.toLowerCase())) p,
+    ];
+  }
+
+  @override
+  Future<FoodProduct?> byBarcode(String code) async {
+    if (failure case final reason?) throw FoodLookupException(reason);
+    return products.where((p) => p.code == code).firstOrNull;
+  }
 }
 
 class FakeWeightRemote implements WeightRemote {

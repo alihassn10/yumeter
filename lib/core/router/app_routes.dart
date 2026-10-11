@@ -18,7 +18,10 @@ abstract final class AppRoutes {
   static const scan = '/scan';
   static const mealResult = '/meal-result';
   static const foodSearch = '/food-search';
-  static const barcodeResult = '/barcode-result';
+  static const barcodeScan = '/barcode';
+
+  /// A packaged food to log; the product travels as `extra`.
+  static const foodProduct = '/food';
   static const quickAdd = '/quick-add';
 
   /// One logged meal, full screen above the tabs.
