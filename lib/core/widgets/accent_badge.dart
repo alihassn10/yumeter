@@ -11,26 +11,29 @@ class AccentBadge extends StatelessWidget {
     super.key,
     required this.label,
     this.icon,
-    this.color = AppColors.calories,
+    this.color,
     this.tinted = false,
   });
 
   final String label;
   final IconData? icon;
-  final Color color;
+
+  /// The accent; the palette's calorie orange when null.
+  final Color? color;
 
   /// When true the fill is the accent at 12%; otherwise the neutral track.
   final bool tinted;
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? context.colors.calories;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: tinted ? AppColors.tint(color) : AppColors.track,
+        color: tinted ? AppColors.tint(color) : context.colors.track,
         borderRadius: AppRadii.pillShape,
       ),
       child: Row(
@@ -42,7 +45,7 @@ class AccentBadge extends StatelessWidget {
           ],
           Text(
             label,
-            style: AppTypography.labelMedium.copyWith(color: color),
+            style: context.text.labelMedium.copyWith(color: color),
           ),
         ],
       ),

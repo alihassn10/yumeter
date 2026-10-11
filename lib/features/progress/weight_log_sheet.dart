@@ -82,17 +82,17 @@ class _WeightLogSheetState extends ConsumerState<WeightLogSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("Log today's weight", style: AppTypography.headlineMedium),
+          Text("Log today's weight", style: context.text.headlineMedium),
           const SizedBox(height: AppSpacing.xs),
-          Text(Dates.friendlyDay(_today), style: AppTypography.bodySmall),
+          Text(Dates.friendlyDay(_today), style: context.text.bodySmall),
           const SizedBox(height: AppSpacing.lg),
           Center(
             child: Text.rich(
               TextSpan(
                 text: _value.toStringAsFixed(1),
-                style: AppTypography.displaySmall,
+                style: context.text.displaySmall,
                 children: [
-                  TextSpan(text: ' $_unit', style: AppTypography.bodyLarge),
+                  TextSpan(text: ' $_unit', style: context.text.bodyLarge),
                 ],
               ),
             ),
@@ -113,7 +113,7 @@ class _WeightLogSheetState extends ConsumerState<WeightLogSheet> {
             const SizedBox(height: AppSpacing.md),
             Text(
               line,
-              style: AppTypography.bodyMedium,
+              style: context.text.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ],
@@ -161,7 +161,7 @@ class _Change extends StatelessWidget {
     return Text(
       '$sign${delta.abs().toStringAsFixed(1)} ${sheet._unit} since '
       '${Dates.friendlyDay(previous.day)}',
-      style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+      style: context.text.bodySmall.copyWith(color: context.colors.textSecondary),
     );
   }
 }

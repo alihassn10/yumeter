@@ -77,7 +77,7 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
     final result = await showDialog<double>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: context.colors.surface,
         title: const Text('Amount in grams'),
         content: TextField(
           controller: controller,
@@ -149,8 +149,8 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
           children: [
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: AppRadii.cardShape,
               ),
               child: Column(
@@ -168,14 +168,14 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
                             if (_product.brand case final brand?)
                               Text(
                                 brand.toUpperCase(),
-                                style: AppTypography.labelSmall,
+                                style: context.text.labelSmall,
                               ),
                             Text(
                               _product.name,
-                              style: AppTypography.headlineSmall,
+                              style: context.text.headlineSmall,
                             ),
                             if (_product.packageLabel case final pack?)
-                              Text(pack, style: AppTypography.bodySmall),
+                              Text(pack, style: context.text.bodySmall),
                           ],
                         ),
                       ),
@@ -216,13 +216,13 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
                               children: [
                                 Text(
                                   _amountLabel,
-                                  style: AppTypography.labelLarge,
+                                  style: context.text.labelLarge,
                                   textAlign: TextAlign.center,
                                 ),
                                 if (_byServing)
                                   Text(
                                     '${_amountGrams.round()} g',
-                                    style: AppTypography.bodySmall,
+                                    style: context.text.bodySmall,
                                   ),
                               ],
                             ),
@@ -242,8 +242,8 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
             const SizedBox(height: AppSpacing.md),
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: AppRadii.cardShape,
               ),
               child: Column(
@@ -252,9 +252,9 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
                   Text.rich(
                     TextSpan(
                       text: groupedNumber(portion.calories),
-                      style: AppTypography.metricHeadline,
+                      style: context.text.metricHeadline,
                       children: [
-                        TextSpan(text: ' kcal', style: AppTypography.bodyMedium),
+                        TextSpan(text: ' kcal', style: context.text.bodyMedium),
                       ],
                     ),
                   ),
@@ -262,7 +262,7 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
                     Text(
                       '${(portion.calories / plan.calories * 100).round()}% of '
                       'your ${groupedNumber(plan.calories)} kcal daily target',
-                      style: AppTypography.bodySmall,
+                      style: context.text.bodySmall,
                     ),
                   const SizedBox(height: AppSpacing.md),
                   Row(
@@ -294,13 +294,13 @@ class _FoodProductScreenState extends ConsumerState<FoodProductScreen> {
                     'P ${_product.proteinPer100g.toStringAsFixed(1)} g · '
                     'C ${_product.carbPer100g.toStringAsFixed(1)} g · '
                     'F ${_product.fatPer100g.toStringAsFixed(1)} g',
-                    style: AppTypography.bodySmall,
+                    style: context.text.bodySmall,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Log to', style: AppTypography.labelLarge),
+            Text('Log to', style: context.text.labelLarge),
             const SizedBox(height: AppSpacing.sm),
             MealTypeChips(
               selected: _type,

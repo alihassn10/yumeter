@@ -54,21 +54,21 @@ class OnboardingScaffold extends StatelessWidget {
               vertical: AppSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: AppColors.tint(AppColors.calories),
+              color: AppColors.tint(context.colors.calories),
               borderRadius: AppRadii.pillShape,
             ),
             child: Text(
               eyebrow!.toUpperCase(),
-              style: AppTypography.labelSmall
-                  .copyWith(color: AppColors.calories),
+              style: context.text.labelSmall
+                  .copyWith(color: context.colors.calories),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
         ],
-        Text(title, style: AppTypography.headlineLarge),
+        Text(title, style: context.text.headlineLarge),
         if (subtitle != null) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text(subtitle!, style: AppTypography.bodyMedium),
+          Text(subtitle!, style: context.text.bodyMedium),
         ],
         const SizedBox(height: AppSpacing.lg),
       ],
@@ -115,8 +115,8 @@ class OnboardingScaffold extends StatelessWidget {
                     Text(
                       footnote!,
                       textAlign: TextAlign.center,
-                      style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.textHint),
+                      style: context.text.bodySmall
+                          .copyWith(color: context.colors.textHint),
                     ),
                   ],
                 ],
@@ -162,12 +162,12 @@ class _ProgressHeader extends StatelessWidget {
                 child: Text.rich(
                   TextSpan(
                     text: 'STEP ',
-                    style: AppTypography.labelSmall,
+                    style: context.text.labelSmall,
                     children: [
                       TextSpan(
                         text: '$step',
-                        style: AppTypography.labelSmall
-                            .copyWith(color: AppColors.calories),
+                        style: context.text.labelSmall
+                            .copyWith(color: context.colors.calories),
                       ),
                       TextSpan(text: ' OF $total'),
                     ],
@@ -191,8 +191,8 @@ class _ProgressHeader extends StatelessWidget {
                 builder: (context, value, _) => LinearProgressIndicator(
                   value: value,
                   minHeight: 6,
-                  color: AppColors.calories,
-                  backgroundColor: AppColors.track,
+                  color: context.colors.calories,
+                  backgroundColor: context.colors.track,
                 ),
               ),
             ),

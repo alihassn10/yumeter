@@ -28,9 +28,9 @@ class MealTile extends StatelessWidget {
     // otherwise read "0g C 0g F", which claims zero rather than unknown.
     final macros = [
       if (entry.proteinGrams > 0)
-        _macro('${entry.proteinGrams}g P', AppColors.protein),
-      if (entry.carbGrams > 0) _macro('${entry.carbGrams}g C', AppColors.carbs),
-      if (entry.fatGrams > 0) _macro('${entry.fatGrams}g F', AppColors.fat),
+        _macro('${entry.proteinGrams}g P', context.colors.protein),
+      if (entry.carbGrams > 0) _macro('${entry.carbGrams}g C', context.colors.carbs),
+      if (entry.fatGrams > 0) _macro('${entry.fatGrams}g F', context.colors.fat),
     ];
 
     return Dismissible(
@@ -41,13 +41,13 @@ class MealTile extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: AppColors.tint(AppColors.error),
+          color: AppColors.tint(context.colors.error),
           borderRadius: AppRadii.nestedShape,
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
+        child: Icon(Icons.delete_outline_rounded, color: context.colors.error),
       ),
       child: Material(
-        color: AppColors.surface,
+        color: context.colors.surface,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -59,8 +59,8 @@ class MealTile extends StatelessWidget {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.track,
+                  decoration: BoxDecoration(
+                    color: context.colors.track,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -68,7 +68,7 @@ class MealTile extends StatelessWidget {
                         ? Icons.photo_camera_rounded
                         : entry.type.icon,
                     size: 20,
-                    color: AppColors.calories,
+                    color: context.colors.calories,
                     semanticLabel: entry.photoPath != null
                         ? 'Photo meal'
                         : null,
@@ -82,20 +82,20 @@ class MealTile extends StatelessWidget {
                     children: [
                       Text(
                         entry.name,
-                        style: AppTypography.headlineSmall,
+                        style: context.text.headlineSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${entry.type.label} · ${Dates.time(entry.loggedAt)}',
-                        style: AppTypography.bodySmall,
+                        style: context.text.bodySmall,
                       ),
                       if (macros.isNotEmpty) ...[
                         const SizedBox(height: AppSpacing.xs),
                         Text.rich(
                           TextSpan(
-                            style: AppTypography.labelSmall,
+                            style: context.text.labelSmall,
                             children: [
                               for (final (i, macro) in macros.indexed) ...[
                                 if (i > 0) const TextSpan(text: '   '),
@@ -112,8 +112,8 @@ class MealTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${entry.calories}', style: AppTypography.metricSub),
-                    Text('kcal', style: AppTypography.bodySmall),
+                    Text('${entry.calories}', style: context.text.metricSub),
+                    Text('kcal', style: context.text.bodySmall),
                   ],
                 ),
               ],

@@ -79,7 +79,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   children: [
                     Text(
                       'Track every meal in\na couple of taps',
-                      style: AppTypography.headlineLarge,
+                      style: context.text.headlineLarge,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.lg),
@@ -121,8 +121,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     'Renews automatically until cancelled. Cancel any time in '
                     'your store account settings.',
                     textAlign: TextAlign.center,
-                    style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.textHint),
+                    style: context.text.bodySmall
+                        .copyWith(color: context.colors.textHint),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextButton(
@@ -159,10 +159,10 @@ class _Benefits extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: Row(
               children: [
-                Icon(icon, size: 22, color: AppColors.calories),
+                Icon(icon, size: 22, color: context.colors.calories),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: Text(label, style: AppTypography.bodyLarge),
+                  child: Text(label, style: context.text.bodyLarge),
                 ),
               ],
             ),
@@ -194,10 +194,10 @@ class _OptionCard extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.all(AppSpacing.gutter),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppRadii.nestedShape,
             border: Border.all(
-              color: selected ? AppColors.calories : AppColors.track,
+              color: selected ? context.colors.calories : context.colors.track,
               width: selected ? 2 : 1,
             ),
           ),
@@ -211,7 +211,7 @@ class _OptionCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(option.title,
-                            style: AppTypography.headlineSmall),
+                            style: context.text.headlineSmall),
                         if (option.badge != null) ...[
                           const SizedBox(width: AppSpacing.sm),
                           AccentBadge(label: option.badge!, tinted: true),
@@ -219,16 +219,16 @@ class _OptionCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(option.detail, style: AppTypography.bodySmall),
+                    Text(option.detail, style: context.text.bodySmall),
                   ],
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
               Text(
                 option.price,
-                style: AppTypography.labelLarge.copyWith(
+                style: context.text.labelLarge.copyWith(
                   color:
-                      selected ? AppColors.calories : AppColors.textPrimary,
+                      selected ? context.colors.calories : context.colors.textPrimary,
                 ),
               ),
             ],

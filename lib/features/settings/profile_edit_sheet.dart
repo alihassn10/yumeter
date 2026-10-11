@@ -97,7 +97,7 @@ class _ProfileEditSheetState extends ConsumerState<ProfileEditSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(widget.title, style: AppTypography.headlineMedium),
+            Text(widget.title, style: context.text.headlineMedium),
             const SizedBox(height: AppSpacing.md),
             Flexible(
               child: SingleChildScrollView(
@@ -126,10 +126,10 @@ class _ProfileEditSheetState extends ConsumerState<ProfileEditSheet> {
     final (_, question, hint, input) = onboardingStepContent(step);
     return [
       if (widget.steps.length > 1) ...[
-        Text(question, style: AppTypography.headlineSmall),
+        Text(question, style: context.text.headlineSmall),
         if (hint != null) ...[
           const SizedBox(height: 2),
-          Text(hint, style: AppTypography.bodySmall),
+          Text(hint, style: context.text.bodySmall),
         ],
         const SizedBox(height: AppSpacing.md),
       ],

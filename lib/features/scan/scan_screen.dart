@@ -197,7 +197,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
                 child: ClipRRect(
                   borderRadius: AppRadii.cardShape,
                   child: ColoredBox(
-                    color: AppColors.surface,
+                    color: context.colors.surface,
                     child: ready
                         ? _Viewfinder(camera: camera)
                         : _CameraPlaceholder(problem: _cameraProblem),
@@ -208,7 +208,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
             const SizedBox(height: AppSpacing.lg),
             Text(
               'Keep the whole plate in frame and well lit.',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -274,15 +274,15 @@ class _CameraPlaceholder extends StatelessWidget {
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.no_photography_rounded,
                     size: 40,
-                    color: AppColors.textSecondary,
+                    color: context.colors.textSecondary,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     problem,
-                    style: AppTypography.bodyMedium,
+                    style: context.text.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -314,16 +314,16 @@ class _Shutter extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.calories, width: 3),
+              border: Border.all(color: context.colors.calories, width: 3),
             ),
-            child: const DecoratedBox(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.calories,
+                color: context.colors.calories,
               ),
               child: Icon(
                 Icons.camera_alt_rounded,
-                color: AppColors.canvas,
+                color: context.colors.canvas,
                 size: 30,
               ),
             ),
@@ -355,13 +355,13 @@ class _SideAction extends StatelessWidget {
           icon: Icon(icon),
           iconSize: 26,
           style: IconButton.styleFrom(
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textPrimary,
+            backgroundColor: context.colors.surface,
+            foregroundColor: context.colors.textPrimary,
             minimumSize: const Size.square(52),
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
-        Text(label, style: AppTypography.labelSmall),
+        Text(label, style: context.text.labelSmall),
       ],
     );
   }

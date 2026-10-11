@@ -79,41 +79,41 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenMargin),
           children: [
-            const Center(
+            Center(
               child: CircleAvatar(
                 radius: 36,
-                backgroundColor: Color(0x33F87171),
+                backgroundColor: AppColors.tint(context.colors.error),
                 child: Icon(
                   Icons.delete_forever_rounded,
                   size: 36,
-                  color: AppColors.error,
+                  color: context.colors.error,
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               'Delete your Yumeter account?',
-              style: AppTypography.headlineMedium,
+              style: context.text.headlineMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
               'This permanently deletes your account and everything in it. '
               'It cannot be undone.',
-              style: AppTypography.bodyMedium,
+              style: context.text.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: AppRadii.cardShape,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('What gets deleted', style: AppTypography.labelLarge),
+                  Text('What gets deleted', style: context.text.labelLarge),
                   const SizedBox(height: AppSpacing.md),
                   _Erased(
                     icon: Icons.restaurant_rounded,
@@ -149,12 +149,12 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
             Text.rich(
               TextSpan(
                 text: 'Type ',
-                style: AppTypography.bodyMedium,
+                style: context.text.bodyMedium,
                 children: [
                   TextSpan(
                     text: DeleteAccountScreen.confirmWord,
-                    style: AppTypography.labelLarge
-                        .copyWith(color: AppColors.error),
+                    style: context.text.labelLarge
+                        .copyWith(color: context.colors.error),
                   ),
                   const TextSpan(text: ' to confirm'),
                 ],
@@ -177,7 +177,7 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
                 child: Text(
                   error,
                   style:
-                      AppTypography.bodySmall.copyWith(color: AppColors.error),
+                      context.text.bodySmall.copyWith(color: context.colors.error),
                 ),
               ),
             const SizedBox(height: AppSpacing.lg),
@@ -189,8 +189,8 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
             ElevatedButton(
               onPressed: _confirmed && !_deleting ? _delete : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error,
-                foregroundColor: AppColors.canvas,
+                backgroundColor: context.colors.error,
+                foregroundColor: context.colors.canvas,
               ),
               child: _deleting
                   ? const SizedBox.square(
@@ -203,7 +203,7 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
             Text(
               'Need a break instead? You can sign out from Settings and come '
               'back to everything later.',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
               textAlign: TextAlign.center,
             ),
           ],
@@ -234,14 +234,14 @@ class _Erased extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.textSecondary),
+          Icon(icon, color: context.colors.textSecondary),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTypography.bodyLarge),
-                Text(detail, style: AppTypography.bodySmall),
+                Text(title, style: context.text.bodyLarge),
+                Text(detail, style: context.text.bodySmall),
               ],
             ),
           ),

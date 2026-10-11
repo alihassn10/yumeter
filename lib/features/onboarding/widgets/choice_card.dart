@@ -33,10 +33,10 @@ class ChoiceCard extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.colors.surface,
           borderRadius: AppRadii.nestedShape,
           border: Border.all(
-            color: selected ? AppColors.calories : Colors.transparent,
+            color: selected ? context.colors.calories : Colors.transparent,
           ),
         ),
         child: Material(
@@ -55,16 +55,16 @@ class ChoiceCard extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.tint(AppColors.calories)
-                            : AppColors.track,
+                            ? AppColors.tint(context.colors.calories)
+                            : context.colors.track,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         icon,
                         size: 20,
                         color: selected
-                            ? AppColors.calories
-                            : AppColors.textSecondary,
+                            ? context.colors.calories
+                            : context.colors.textSecondary,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.md),
@@ -79,7 +79,7 @@ class ChoiceCard extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 title,
-                                style: AppTypography.headlineSmall,
+                                style: context.text.headlineSmall,
                               ),
                             ),
                             if (badge != null) ...[
@@ -90,13 +90,13 @@ class ChoiceCard extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.tint(AppColors.calories),
+                                  color: AppColors.tint(context.colors.calories),
                                   borderRadius: AppRadii.pillShape,
                                 ),
                                 child: Text(
                                   badge!,
-                                  style: AppTypography.labelSmall
-                                      .copyWith(color: AppColors.calories),
+                                  style: context.text.labelSmall
+                                      .copyWith(color: context.colors.calories),
                                 ),
                               ),
                             ],
@@ -104,7 +104,7 @@ class ChoiceCard extends StatelessWidget {
                         ),
                         if (description != null) ...[
                           const SizedBox(height: 2),
-                          Text(description!, style: AppTypography.bodySmall),
+                          Text(description!, style: context.text.bodySmall),
                         ],
                       ],
                     ),
@@ -133,15 +133,15 @@ class _RadioDot extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: selected ? AppColors.calories : Colors.transparent,
+        color: selected ? context.colors.calories : Colors.transparent,
         shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? AppColors.calories : AppColors.outline,
+          color: selected ? context.colors.calories : context.colors.outline,
           width: 2,
         ),
       ),
       child: selected
-          ? const Icon(Icons.check_rounded, size: 16, color: AppColors.canvas)
+          ? Icon(Icons.check_rounded, size: 16, color: context.colors.canvas)
           : null,
     );
   }

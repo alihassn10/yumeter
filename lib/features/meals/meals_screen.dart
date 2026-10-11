@@ -68,7 +68,7 @@ class MealsScreen extends ConsumerWidget {
                   if (i == 0) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: Text('Meals', style: AppTypography.headlineLarge),
+                      child: Text('Meals', style: context.text.headlineLarge),
                     );
                   }
                   return switch (rows[i - 1]) {
@@ -82,12 +82,12 @@ class MealsScreen extends ConsumerWidget {
                             Expanded(
                               child: Text(
                                 Dates.friendlyDay(day),
-                                style: AppTypography.labelLarge,
+                                style: context.text.labelLarge,
                               ),
                             ),
                             Text(
                               '${groupedNumber(calories)} kcal',
-                              style: AppTypography.bodySmall,
+                              style: context.text.bodySmall,
                             ),
                           ],
                         ),
@@ -121,11 +121,11 @@ class _Empty extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('No meals yet', style: AppTypography.headlineSmall),
+            Text('No meals yet', style: context.text.headlineSmall),
             const SizedBox(height: AppSpacing.sm),
             Text(
               'Everything you log shows up here, newest first.',
-              style: AppTypography.bodyMedium,
+              style: context.text.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ],

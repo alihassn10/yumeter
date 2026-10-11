@@ -126,11 +126,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Continue with email', style: AppTypography.headlineLarge),
+        Text('Continue with email', style: context.text.headlineLarge),
         const SizedBox(height: AppSpacing.sm),
         Text(
           'We will email you a code to sign in. No password needed.',
-          style: AppTypography.bodyMedium,
+          style: context.text.bodyMedium,
         ),
         const SizedBox(height: AppSpacing.xl),
         TextField(
@@ -165,17 +165,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Check your email', style: AppTypography.headlineLarge),
+        Text('Check your email', style: context.text.headlineLarge),
         const SizedBox(height: AppSpacing.sm),
         Text.rich(
           TextSpan(
             text: 'Enter the code we sent to ',
-            style: AppTypography.bodyMedium,
+            style: context.text.bodyMedium,
             children: [
               TextSpan(
                 text: sentTo,
-                style: AppTypography.bodyMedium
-                    .copyWith(color: AppColors.textPrimary),
+                style: context.text.bodyMedium
+                    .copyWith(color: context.colors.textPrimary),
               ),
               const TextSpan(text: '.'),
             ],
@@ -193,7 +193,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             LengthLimitingTextInputFormatter(10),
           ],
           textInputAction: TextInputAction.done,
-          style: AppTypography.headlineMedium.copyWith(letterSpacing: 6),
+          style: context.text.headlineMedium.copyWith(letterSpacing: 6),
           onChanged: (_) => setState(() {}),
           onSubmitted: (_) {
             if (_codeValid && !_busy) _verify();
@@ -238,7 +238,7 @@ class _ErrorText extends StatelessWidget {
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: Text(
         message,
-        style: AppTypography.bodySmall.copyWith(color: AppColors.error),
+        style: context.text.bodySmall.copyWith(color: context.colors.error),
       ),
     );
   }

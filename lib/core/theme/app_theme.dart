@@ -6,38 +6,54 @@ import 'app_colors.dart';
 import 'app_dimens.dart';
 import 'app_typography.dart';
 
-/// Assembles the design tokens into the `ThemeData` the app runs on.
+/// Assembles the design tokens into the `ThemeData` the app runs on, once for
+/// each mode. The palette rides along as a theme extension, which is where
+/// `context.colors` and `context.text` read from.
 abstract final class AppTheme {
-  static ThemeData get dark {
-    final scheme = const ColorScheme.dark(
-      surface: AppColors.canvas,
-      onSurface: AppColors.textPrimary,
-      surfaceContainer: AppColors.surface,
-      surfaceContainerHighest: AppColors.track,
-      primary: AppColors.calories,
-      onPrimary: AppColors.canvas,
+  static ThemeData get dark => _build(AppPalette.dark, Brightness.dark);
+
+  static ThemeData get light => _build(AppPalette.light, Brightness.light);
+
+  static ThemeData _build(AppPalette c, Brightness brightness) {
+    final t = AppTypography(c);
+    final isDark = brightness == Brightness.dark;
+
+    final scheme = ColorScheme(
+      brightness: brightness,
+      surface: c.canvas,
+      onSurface: c.textPrimary,
+      surfaceContainer: c.surface,
+      surfaceContainerHighest: c.track,
+      primary: c.calories,
+      onPrimary: c.onAccent,
       // Material components fall back to `secondary` for tonal buttons and
       // selections. It was the protein pink, which leaked into unrelated
       // controls; the brand orange keeps them on palette.
-      secondary: AppColors.calories,
-      onSecondary: AppColors.canvas,
+      secondary: c.calories,
+      onSecondary: c.onAccent,
       // The orange at 15% over the card surface, made opaque so it reads the
       // same on any background.
-      secondaryContainer: Color(0xFF3B2920),
-      onSecondaryContainer: AppColors.calories,
-      error: AppColors.error,
-      onError: AppColors.canvas,
-      outline: AppColors.outline,
-      outlineVariant: AppColors.track,
+      secondaryContainer:
+          isDark ? const Color(0xFF3B2920) : const Color(0xFFFFEBDD),
+      onSecondaryContainer: isDark ? c.calories : const Color(0xFF8A3A00),
+      error: c.error,
+      onError: c.onAccent,
+      outline: c.outline,
+      outlineVariant: c.track,
     );
+
+    // Status bar icons contrast with the canvas behind them.
+    final overlay =
+        isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.canvas,
-      textTheme: AppTypography.textTheme,
+      scaffoldBackgroundColor: c.canvas,
+      textTheme: t.textTheme,
       splashFactory: InkSparkle.splashFactory,
+      extensions: [c],
 
       // Every route animates the platform's way: Material 3's fade-forward
       // on Android, the native slide (with swipe-back) on iOS.
@@ -49,86 +65,91 @@ abstract final class AppTheme {
       ),
 
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.canvas,
+        backgroundColor: c.canvas,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTypography.headlineSmall,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        titleTextStyle: t.headlineSmall,
+        iconTheme: IconThemeData(color: c.textPrimary),
+        systemOverlayStyle: overlay,
       ),
 
       // Primary CTA: full-width stadium pill with an ambient accent glow that
       // the caller adds via AppColors.glow() when it should light up.
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.calories,
-          foregroundColor: AppColors.canvas,
-          disabledBackgroundColor: AppColors.track,
-          disabledForegroundColor: AppColors.textHint,
+          backgroundColor: c.calories,
+          foregroundColor: c.onAccent,
+          disabledBackgroundColor: c.track,
+          disabledForegroundColor: c.textHint,
           minimumSize: const Size.fromHeight(AppSizes.primaryButton),
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillShape),
-          textStyle: AppTypography.labelLarge,
+          textStyle: t.labelLarge,
           elevation: 0,
         ),
       ),
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          backgroundColor: AppColors.track,
-          foregroundColor: AppColors.textPrimary,
+          backgroundColor: c.track,
+          foregroundColor: c.textPrimary,
           minimumSize: const Size.fromHeight(AppSizes.primaryButton),
-          side: const BorderSide(color: AppColors.outline),
+          side: BorderSide(color: c.outline),
           shape: const RoundedRectangleBorder(borderRadius: AppRadii.pillShape),
-          textStyle: AppTypography.labelLarge,
+          textStyle: t.labelLarge,
         ),
       ),
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.textSecondary,
-          textStyle: AppTypography.labelMedium,
+          foregroundColor: c.textSecondary,
+          textStyle: t.labelMedium,
         ),
       ),
 
-      cardTheme: const CardThemeData(
-        color: AppColors.surface,
+      cardTheme: CardThemeData(
+        color: c.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: AppRadii.cardShape),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.cardShape),
       ),
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
-        hintStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textHint),
+        fillColor: c.surface,
+        hintStyle: t.bodyMedium.copyWith(color: c.textHint),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.gutter,
           vertical: AppSpacing.md,
         ),
-        prefixIconColor: AppColors.textSecondary,
-        border: _inputBorder(AppColors.track),
-        enabledBorder: _inputBorder(AppColors.track),
-        focusedBorder: _inputBorder(AppColors.calories),
-        errorBorder: _inputBorder(AppColors.error),
+        prefixIconColor: c.textSecondary,
+        border: _inputBorder(c.track),
+        enabledBorder: _inputBorder(c.track),
+        focusedBorder: _inputBorder(c.calories),
+        errorBorder: _inputBorder(c.error),
       ),
 
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.surface,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: c.surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        dragHandleColor: AppColors.outline,
-        shape: RoundedRectangleBorder(borderRadius: AppRadii.sheetShape),
+        dragHandleColor: c.outline,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.sheetShape),
       ),
 
-      // Floats above the tab bar in the dark palette; the default is a light
-      // slab that glares against the canvas.
+      dialogTheme: DialogThemeData(
+        backgroundColor: c.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+
+      // Floats above the tab bar in the palette; the default is a slab that
+      // glares against the canvas.
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.track,
+        backgroundColor: isDark ? c.track : c.textPrimary,
         contentTextStyle:
-            AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary),
-        actionTextColor: AppColors.calories,
+            t.bodyMedium.copyWith(color: isDark ? c.textPrimary : c.canvas),
+        actionTextColor: c.calories,
         behavior: SnackBarBehavior.floating,
         elevation: 0,
         shape: const RoundedRectangleBorder(
@@ -136,35 +157,29 @@ abstract final class AppTheme {
         ),
       ),
 
-      dividerTheme: const DividerThemeData(
-        color: AppColors.track,
-        thickness: 1,
-        space: 1,
-      ),
+      dividerTheme: DividerThemeData(color: c.track, thickness: 1, space: 1),
 
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.calories,
-        linearTrackColor: AppColors.track,
-        circularTrackColor: AppColors.track,
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: c.calories,
+        linearTrackColor: c.track,
+        circularTrackColor: c.track,
         strokeCap: StrokeCap.round,
       ),
 
       switchTheme: SwitchThemeData(
         trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected)
-              ? AppColors.calories
-              : AppColors.track,
+          (s) => s.contains(WidgetState.selected) ? c.calories : c.track,
         ),
-        thumbColor: const WidgetStatePropertyAll(AppColors.textPrimary),
+        thumbColor: WidgetStatePropertyAll(isDark ? c.textPrimary : c.canvas),
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
       ),
 
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.canvas,
-        selectedItemColor: AppColors.calories,
-        unselectedItemColor: AppColors.textHint,
-        selectedLabelStyle: AppTypography.labelSmall,
-        unselectedLabelStyle: AppTypography.labelSmall,
+        backgroundColor: c.canvas,
+        selectedItemColor: c.calories,
+        unselectedItemColor: c.textHint,
+        selectedLabelStyle: t.labelSmall,
+        unselectedLabelStyle: t.labelSmall,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),

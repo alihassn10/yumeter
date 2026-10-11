@@ -76,10 +76,10 @@ class _Day extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = Dates.weekdaysShort[date.weekday - 1];
     final foreground = selected
-        ? AppColors.canvas
+        ? context.colors.canvas
         : future
-            ? AppColors.textHint.withValues(alpha: 0.5)
-            : AppColors.textPrimary;
+            ? context.colors.textHint.withValues(alpha: 0.5)
+            : context.colors.textPrimary;
 
     return Semantics(
       button: !future,
@@ -93,24 +93,24 @@ class _Day extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 3),
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? AppColors.calories : Colors.transparent,
+            color: selected ? context.colors.calories : Colors.transparent,
             borderRadius: BorderRadius.circular(AppRadii.md),
             border: Border.all(
-              color: isToday && !selected ? AppColors.outline : Colors.transparent,
+              color: isToday && !selected ? context.colors.outline : Colors.transparent,
             ),
           ),
           child: Column(
             children: [
               Text(
                 label.substring(0, 1),
-                style: AppTypography.labelSmall.copyWith(
-                  color: selected ? AppColors.canvas : AppColors.textHint,
+                style: context.text.labelSmall.copyWith(
+                  color: selected ? context.colors.canvas : context.colors.textHint,
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 '${date.day}',
-                style: AppTypography.labelLarge.copyWith(color: foreground),
+                style: context.text.labelLarge.copyWith(color: foreground),
               ),
               const SizedBox(height: AppSpacing.xs),
               Container(
@@ -119,7 +119,7 @@ class _Day extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: logged
-                      ? (selected ? AppColors.canvas : AppColors.calories)
+                      ? (selected ? context.colors.canvas : context.colors.calories)
                       : Colors.transparent,
                 ),
               ),

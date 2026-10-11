@@ -230,16 +230,16 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Text(draft.name, style: AppTypography.headlineMedium),
+              child: Text(draft.name, style: context.text.headlineMedium),
             ),
-            const Icon(Icons.edit_rounded, color: AppColors.textSecondary),
+            Icon(Icons.edit_rounded, color: context.colors.textSecondary),
           ],
         ),
       ),
       const SizedBox(height: AppSpacing.xs),
       Text(
         'Estimated from your photo. Tap any food to adjust it.',
-        style: AppTypography.bodySmall,
+        style: context.text.bodySmall,
       ),
       const SizedBox(height: AppSpacing.lg),
       MealTypeChips(
@@ -249,8 +249,8 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
       const SizedBox(height: AppSpacing.lg),
       Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: AppRadii.cardShape,
         ),
         child: Column(
@@ -259,9 +259,9 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
             Text.rich(
               TextSpan(
                 text: groupedNumber(draft.calories),
-                style: AppTypography.metricHeadline,
+                style: context.text.metricHeadline,
                 children: [
-                  TextSpan(text: ' kcal', style: AppTypography.bodyMedium),
+                  TextSpan(text: ' kcal', style: context.text.bodyMedium),
                 ],
               ),
             ),
@@ -296,7 +296,7 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
       const SizedBox(height: AppSpacing.lg),
       Row(
         children: [
-          Expanded(child: Text('Foods', style: AppTypography.labelLarge)),
+          Expanded(child: Text('Foods', style: context.text.labelLarge)),
           TextButton.icon(
             onPressed: () => _editItem(null),
             icon: const Icon(Icons.add_rounded),
@@ -312,7 +312,7 @@ class _MealResultScreenState extends ConsumerState<MealResultScreen> {
       if (draft.items.isEmpty)
         Padding(
           padding: const EdgeInsets.only(top: AppSpacing.sm),
-          child: Text('No foods left.', style: AppTypography.bodyMedium),
+          child: Text('No foods left.', style: context.text.bodyMedium),
         ),
     ];
   }
@@ -329,11 +329,11 @@ class _Analyzing extends StatelessWidget {
         children: [
           const CircularProgressIndicator(),
           const SizedBox(height: AppSpacing.lg),
-          Text('Analysing your meal…', style: AppTypography.headlineSmall),
+          Text('Analysing your meal…', style: context.text.headlineSmall),
           const SizedBox(height: AppSpacing.xs),
           Text(
             'This usually takes a few seconds.',
-            style: AppTypography.bodySmall,
+            style: context.text.bodySmall,
           ),
         ],
       ),
@@ -385,16 +385,16 @@ class _FailureCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, style: AppTypography.headlineSmall),
+          Text(title, style: context.text.headlineSmall),
           const SizedBox(height: AppSpacing.sm),
-          Text(body, style: AppTypography.bodyMedium),
+          Text(body, style: context.text.bodyMedium),
           const SizedBox(height: AppSpacing.lg),
           switch (kind) {
             AnalysisFailureKind.notFood => ElevatedButton(
@@ -436,16 +436,16 @@ class _ItemTile extends StatelessWidget {
     ].join('  ·  ');
 
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         onTap: onTap,
         title: Text(item.name),
-        subtitle: Text(detail, style: AppTypography.bodySmall),
+        subtitle: Text(detail, style: context.text.bodySmall),
         trailing: Text(
           '${groupedNumber(item.calories)} kcal',
-          style: AppTypography.labelLarge,
+          style: context.text.labelLarge,
         ),
       ),
     );
@@ -549,7 +549,7 @@ class _ItemSheetState extends State<_ItemSheet> {
           children: [
             Text(
               editing ? 'Adjust food' : 'Add food',
-              style: AppTypography.headlineSmall,
+              style: context.text.headlineSmall,
             ),
             const SizedBox(height: AppSpacing.md),
             TextField(
@@ -560,7 +560,7 @@ class _ItemSheetState extends State<_ItemSheet> {
               decoration: const InputDecoration(hintText: 'Food name'),
             ),
             if (editing) ...[
-              Text('Portion', style: AppTypography.labelMedium),
+              Text('Portion', style: context.text.labelMedium),
               const SizedBox(height: AppSpacing.sm),
               Wrap(
                 spacing: AppSpacing.sm,
@@ -615,7 +615,7 @@ class _ItemSheetState extends State<_ItemSheet> {
               const SizedBox(height: AppSpacing.sm),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(const _ItemRemoved()),
-                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                style: TextButton.styleFrom(foregroundColor: context.colors.error),
                 child: const Text('Remove from meal'),
               ),
             ],
@@ -663,7 +663,7 @@ Future<String?> _askText(
   final result = await showDialog<String>(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colors.surface,
       title: Text(title),
       content: TextField(
         controller: controller,

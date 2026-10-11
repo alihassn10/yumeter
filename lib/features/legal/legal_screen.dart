@@ -46,7 +46,7 @@ class LegalScreen extends StatelessWidget {
                 AppSpacing.screenMargin,
                 AppSpacing.xl,
               ),
-              children: markdownBlocks(text),
+              children: markdownBlocks(context, text),
             );
           },
         ),
@@ -58,7 +58,7 @@ class LegalScreen extends StatelessWidget {
 /// Renders the small Markdown subset the documents use: `#` and `##`
 /// headings, paragraphs, `- ` bullets and `**bold**`. The document's own `#`
 /// title is skipped, since the app bar already shows it.
-List<Widget> markdownBlocks(String markdown) {
+List<Widget> markdownBlocks(BuildContext context, String markdown) {
   final widgets = <Widget>[];
   final paragraph = <String>[];
 
@@ -66,7 +66,7 @@ List<Widget> markdownBlocks(String markdown) {
     if (paragraph.isEmpty) return;
     widgets.add(Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Text.rich(_inline(paragraph.join(' '))),
+      child: Text.rich(_inline(context, paragraph.join(' '))),
     ));
     paragraph.clear();
   }
@@ -79,7 +79,7 @@ List<Widget> markdownBlocks(String markdown) {
       flush();
       widgets.add(Padding(
         padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
-        child: Text(line.substring(3), style: AppTypography.headlineSmall),
+        child: Text(line.substring(3), style: context.text.headlineSmall),
       ));
     } else if (line.startsWith('- ')) {
       flush();
@@ -88,8 +88,8 @@ List<Widget> markdownBlocks(String markdown) {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('•  ', style: AppTypography.bodyMedium),
-            Expanded(child: Text.rich(_inline(line.substring(2)))),
+            Text('•  ', style: context.text.bodyMedium),
+            Expanded(child: Text.rich(_inline(context, line.substring(2)))),
           ],
         ),
       ));
@@ -104,8 +104,8 @@ List<Widget> markdownBlocks(String markdown) {
 }
 
 /// Splits on `**` so alternate runs are bold.
-TextSpan _inline(String text) {
-  final base = AppTypography.bodyMedium.copyWith(color: AppColors.textPrimary);
+TextSpan _inline(BuildContext context, String text) {
+  final base = context.text.bodyMedium.copyWith(color: context.colors.textPrimary);
   final parts = text.split('**');
   return TextSpan(
     style: base,

@@ -110,7 +110,7 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected ? AppColors.canvas : AppColors.textSecondary;
+    final foreground = selected ? context.colors.canvas : context.colors.textSecondary;
 
     return Semantics(
       selected: selected,
@@ -124,7 +124,7 @@ class _Chip extends StatelessWidget {
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: selected ? AppColors.calories : AppColors.track,
+            color: selected ? context.colors.calories : context.colors.track,
             borderRadius: AppRadii.pillShape,
           ),
           child: Row(
@@ -134,7 +134,7 @@ class _Chip extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Text(
                 type.label,
-                style: AppTypography.labelMedium.copyWith(color: foreground),
+                style: context.text.labelMedium.copyWith(color: foreground),
               ),
             ],
           ),

@@ -13,8 +13,8 @@ class CalorieRing extends StatelessWidget {
     required this.progress,
     this.size = 96,
     this.strokeWidth = AppSizes.ringStroke,
-    this.color = AppColors.calories,
-    this.trackColor = AppColors.track,
+    this.color,
+    this.trackColor,
     this.child,
   });
 
@@ -23,8 +23,9 @@ class CalorieRing extends StatelessWidget {
   final double progress;
   final double size;
   final double strokeWidth;
-  final Color color;
-  final Color trackColor;
+  /// Sweep and track colours; the palette's orange and track when null.
+  final Color? color;
+  final Color? trackColor;
 
   /// Optional content centred inside the ring.
   final Widget? child;
@@ -39,8 +40,8 @@ class CalorieRing extends StatelessWidget {
         painter: _RingPainter(
           progress: value,
           strokeWidth: strokeWidth,
-          color: color,
-          trackColor: trackColor,
+          color: color ?? context.colors.calories,
+          trackColor: trackColor ?? context.colors.track,
         ),
         size: Size.square(size),
         child: SizedBox.square(

@@ -46,7 +46,7 @@ class CalorieChart extends StatelessWidget {
                 drawVerticalLine: false,
                 horizontalInterval: interval,
                 getDrawingHorizontalLine: (_) =>
-                    const FlLine(color: AppColors.track, strokeWidth: 1),
+                    FlLine(color: context.colors.track, strokeWidth: 1),
               ),
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(),
@@ -58,7 +58,7 @@ class CalorieChart extends StatelessWidget {
                     interval: interval,
                     getTitlesWidget: (value, meta) => SideTitleWidget(
                       meta: meta,
-                      child: Text(_compact(value), style: _axisStyle),
+                      child: Text(_compact(value), style: _axisStyle(context)),
                     ),
                   ),
                 ),
@@ -73,7 +73,7 @@ class CalorieChart extends StatelessWidget {
                       }
                       return SideTitleWidget(
                         meta: meta,
-                        child: Text(bars[i].label, style: _axisStyle),
+                        child: Text(bars[i].label, style: _axisStyle(context)),
                       );
                     },
                   ),
@@ -86,7 +86,7 @@ class CalorieChart extends StatelessWidget {
                     // would cover them. The card caption names the line.
                     HorizontalLine(
                       y: t.toDouble(),
-                      color: AppColors.textSecondary,
+                      color: context.colors.textSecondary,
                       strokeWidth: 1.5,
                       dashArray: const [6, 4],
                     ),
@@ -94,7 +94,7 @@ class CalorieChart extends StatelessWidget {
               ),
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (_) => AppColors.track,
+                  getTooltipColor: (_) => context.colors.track,
                   getTooltipItem: (group, _, _, _) {
                     final bar = bars[group.x];
                     final when = _when(bar);
@@ -103,8 +103,8 @@ class CalorieChart extends StatelessWidget {
                           ? '$when\n${groupedNumber(bar.calories)} kcal'
                               '${bar.loggedDays > 1 ? ' a day' : ''}'
                           : '$when\nNothing logged',
-                      AppTypography.labelMedium
-                          .copyWith(color: AppColors.textPrimary),
+                      context.text.labelMedium
+                          .copyWith(color: context.colors.textPrimary),
                     );
                   },
                 ),
@@ -117,7 +117,7 @@ class CalorieChart extends StatelessWidget {
                       BarChartRodData(
                         toY: bar.calories.toDouble(),
                         width: barWidth,
-                        color: AppColors.calories,
+                        color: context.colors.calories,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(4),
                         ),
@@ -186,7 +186,7 @@ class WeightChart extends StatelessWidget {
           gridData: FlGridData(
             drawVerticalLine: false,
             getDrawingHorizontalLine: (_) =>
-                const FlLine(color: AppColors.track, strokeWidth: 1),
+                FlLine(color: context.colors.track, strokeWidth: 1),
           ),
           titlesData: FlTitlesData(
             topTitles: const AxisTitles(),
@@ -197,7 +197,7 @@ class WeightChart extends StatelessWidget {
                 reservedSize: 40,
                 getTitlesWidget: (value, meta) => SideTitleWidget(
                   meta: meta,
-                  child: Text(value.toStringAsFixed(0), style: _axisStyle),
+                  child: Text(value.toStringAsFixed(0), style: _axisStyle(context)),
                 ),
               ),
             ),
@@ -214,7 +214,7 @@ class WeightChart extends StatelessWidget {
                   fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
                   child: Text(
                     _shortDate(Dates.addDays(first, value.round())),
-                    style: _axisStyle,
+                    style: _axisStyle(context),
                   ),
                 ),
               ),
@@ -225,13 +225,13 @@ class WeightChart extends StatelessWidget {
               if (goal case final g?)
                 HorizontalLine(
                   y: g,
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                   strokeWidth: 1.5,
                   dashArray: const [6, 4],
                   label: HorizontalLineLabel(
                     show: true,
                     alignment: Alignment.topRight,
-                    style: _axisStyle,
+                    style: _axisStyle(context),
                     labelResolver: (_) => 'Goal ${fmt(g)}',
                   ),
                 ),
@@ -239,14 +239,14 @@ class WeightChart extends StatelessWidget {
           ),
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) => AppColors.track,
+              getTooltipColor: (_) => context.colors.track,
               getTooltipItems: (spots) => [
                 for (final s in spots)
                   LineTooltipItem(
                     '${_shortDate(Dates.addDays(first, s.x.round()))}\n'
                     '${fmt(s.y)} $unit',
-                    AppTypography.labelMedium
-                        .copyWith(color: AppColors.textPrimary),
+                    context.text.labelMedium
+                        .copyWith(color: context.colors.textPrimary),
                   ),
               ],
             ),
@@ -257,14 +257,14 @@ class WeightChart extends StatelessWidget {
                 for (final (day, v) in points)
                   FlSpot(day.difference(first).inDays.toDouble(), v),
               ],
-              color: AppColors.textPrimary,
+              color: context.colors.textPrimary,
               barWidth: 2,
               dotData: FlDotData(
                 getDotPainter: (_, _, _, _) => FlDotCirclePainter(
                   radius: 4,
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                   strokeWidth: 2,
-                  strokeColor: AppColors.surface,
+                  strokeColor: context.colors.surface,
                 ),
               ),
             ),
@@ -284,9 +284,9 @@ class MacroSplitBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final parts = [
-      ('Protein', split.proteinShare, split.proteinGrams, AppColors.protein),
-      ('Carbs', split.carbShare, split.carbGrams, AppColors.carbs),
-      ('Fat', split.fatShare, split.fatGrams, AppColors.fat),
+      ('Protein', split.proteinShare, split.proteinGrams, context.colors.protein),
+      ('Carbs', split.carbShare, split.carbGrams, context.colors.carbs),
+      ('Fat', split.fatShare, split.fatGrams, context.colors.fat),
     ];
 
     return Column(
@@ -332,14 +332,14 @@ class MacroSplitBar extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(name, style: AppTypography.bodySmall),
+                          Text(name, style: context.text.bodySmall),
                           Text(
                             '${(share * 100).round()}%',
-                            style: AppTypography.metricSub,
+                            style: context.text.metricSub,
                           ),
                           Text(
                             '${grams}g a day',
-                            style: AppTypography.bodySmall,
+                            style: context.text.bodySmall,
                           ),
                         ],
                       ),
@@ -354,8 +354,8 @@ class MacroSplitBar extends StatelessWidget {
   }
 }
 
-TextStyle get _axisStyle =>
-    AppTypography.labelSmall.copyWith(color: AppColors.textHint);
+TextStyle _axisStyle(BuildContext context) =>
+    context.text.labelSmall.copyWith(color: context.colors.textHint);
 
 String _compact(double v) =>
     v >= 1000 ? '${(v / 1000).toStringAsFixed(v % 1000 == 0 ? 0 : 1)}k' : '${v.round()}';

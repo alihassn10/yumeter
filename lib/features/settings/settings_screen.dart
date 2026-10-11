@@ -7,6 +7,7 @@ import '../../core/storage/profile_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimens.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/theme/theme_mode.dart';
 import '../../core/utils/format.dart';
 import '../auth/data/account_sync.dart';
 import '../auth/data/auth_repository.dart';
@@ -54,7 +55,7 @@ class SettingsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
-              foregroundColor: unsynced == 0 ? null : AppColors.error,
+              foregroundColor: unsynced == 0 ? null : context.colors.error,
             ),
             child: Text(unsynced == 0 ? 'Sign out' : 'Sign out anyway'),
           ),
@@ -89,7 +90,7 @@ class SettingsScreen extends ConsumerWidget {
             AppSpacing.xl * 3,
           ),
           children: [
-            Text('Settings', style: AppTypography.headlineLarge),
+            Text('Settings', style: context.text.headlineLarge),
             const SizedBox(height: AppSpacing.lg),
             _AccountCard(
               email: user?.email,
@@ -198,6 +199,8 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ],
+            const _SectionTitle('Appearance'),
+            const _Group(children: [_ThemeRow()]),
             const _SectionTitle('Account'),
             _Group(
               children: [
@@ -238,7 +241,7 @@ class SettingsScreen extends ConsumerWidget {
               'photos. It is not a medical device and does not give medical '
               'advice. Talk to a doctor or dietitian before big changes to '
               'what you eat.',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
               textAlign: TextAlign.center,
             ),
           ],
@@ -308,7 +311,7 @@ class SettingsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text('How your target is worked out',
-                style: AppTypography.headlineSmall),
+                style: context.text.headlineSmall),
             const SizedBox(height: AppSpacing.md),
             _BreakdownLine(
               'Energy at rest',
@@ -326,7 +329,7 @@ class SettingsScreen extends ConsumerWidget {
                   '${groupedNumber(adjustment.abs())} kcal',
               _goalSummary(profile),
             ),
-            const Divider(color: AppColors.track),
+            Divider(color: context.colors.track),
             _BreakdownLine(
               'Daily target',
               '${groupedNumber(plan.calories)} kcal',
@@ -337,15 +340,15 @@ class SettingsScreen extends ConsumerWidget {
               Text(
                 'Your target is held at a safe minimum, so you may move more '
                 'slowly than the pace you chose.',
-                style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.carbs),
+                style: context.text.bodySmall
+                    .copyWith(color: context.colors.carbs),
               ),
             ],
             const SizedBox(height: AppSpacing.md),
             Text(
               'An estimate, not a measurement or medical advice. It updates '
               'when you log a new weight or change your profile.',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
             ),
           ],
         ),
@@ -372,8 +375,8 @@ class _AccountCard extends StatelessWidget {
     final initial = (email ?? '?').substring(0, 1).toUpperCase();
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
@@ -382,11 +385,11 @@ class _AccountCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 26,
-                backgroundColor: AppColors.tint(AppColors.calories),
+                backgroundColor: AppColors.tint(context.colors.calories),
                 child: Text(
                   initial,
-                  style: AppTypography.headlineSmall
-                      .copyWith(color: AppColors.calories),
+                  style: context.text.headlineSmall
+                      .copyWith(color: context.colors.calories),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -394,10 +397,10 @@ class _AccountCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Signed in as', style: AppTypography.bodySmall),
+                    Text('Signed in as', style: context.text.bodySmall),
                     Text(
                       email ?? 'Not signed in',
-                      style: AppTypography.bodyLarge,
+                      style: context.text.bodyLarge,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -431,9 +434,9 @@ class _Figure extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: AppTypography.bodySmall),
+          Text(label, style: context.text.bodySmall),
           const SizedBox(height: 2),
-          Text(value, style: AppTypography.metricSub),
+          Text(value, style: context.text.metricSub),
         ],
       ),
     );
@@ -454,7 +457,7 @@ class _SectionTitle extends StatelessWidget {
         0,
         AppSpacing.sm,
       ),
-      child: Text(text.toUpperCase(), style: AppTypography.labelMedium),
+      child: Text(text.toUpperCase(), style: context.text.labelMedium),
     );
   }
 }
@@ -469,14 +472,14 @@ class _Group extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadii.cardShape),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           for (final (i, child) in children.indexed) ...[
             if (i > 0)
-              const Divider(height: 1, indent: 56, color: AppColors.track),
+              Divider(height: 1, indent: 56, color: context.colors.track),
             child,
           ],
         ],
@@ -504,22 +507,22 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = destructive ? AppColors.error : null;
+    final color = destructive ? context.colors.error : null;
     return ListTile(
       onTap: onTap,
-      leading: Icon(icon, color: color ?? AppColors.textSecondary),
+      leading: Icon(icon, color: color ?? context.colors.textSecondary),
       title: Text(title, style: TextStyle(color: color)),
       subtitle: subtitle == null
           ? null
-          : Text(subtitle!, style: AppTypography.bodySmall),
+          : Text(subtitle!, style: context.text.bodySmall),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (value case final v?)
-            Text(v, style: AppTypography.labelLarge),
+            Text(v, style: context.text.labelLarge),
           if (onTap != null)
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.textHint),
+            Icon(Icons.chevron_right_rounded,
+                color: context.colors.textHint),
         ],
       ),
     );
@@ -534,8 +537,8 @@ class _UnitsRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
-      leading: const Icon(Icons.straighten_rounded,
-          color: AppColors.textSecondary),
+      leading: Icon(Icons.straighten_rounded,
+          color: context.colors.textSecondary),
       title: const Text('Units'),
       trailing: SegmentedButton<UnitSystem>(
         segments: const [
@@ -571,13 +574,61 @@ class _BreakdownLine extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppTypography.bodyLarge),
+                Text(label, style: context.text.bodyLarge),
                 if (detail case final d? when d.isNotEmpty)
-                  Text(d, style: AppTypography.bodySmall),
+                  Text(d, style: context.text.bodySmall),
               ],
             ),
           ),
-          Text(value, style: AppTypography.labelLarge),
+          Text(value, style: context.text.labelLarge),
+        ],
+      ),
+    );
+  }
+}
+
+/// Light, dark or the phone's own setting. Changes apply at once.
+class _ThemeRow extends ConsumerWidget {
+  const _ThemeRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.gutter),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.contrast_rounded, color: context.colors.textSecondary),
+              const SizedBox(width: AppSpacing.md),
+              Text('Theme', style: context.text.bodyLarge),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          SegmentedButton<ThemeMode>(
+            segments: const [
+              ButtonSegment(
+                value: ThemeMode.system,
+                label: Text('System'),
+                icon: Icon(Icons.phone_android_rounded),
+              ),
+              ButtonSegment(
+                value: ThemeMode.light,
+                label: Text('Light'),
+                icon: Icon(Icons.light_mode_rounded),
+              ),
+              ButtonSegment(
+                value: ThemeMode.dark,
+                label: Text('Dark'),
+                icon: Icon(Icons.dark_mode_rounded),
+              ),
+            ],
+            selected: {ref.watch(themeModeProvider)},
+            showSelectedIcon: false,
+            onSelectionChanged: (s) =>
+                ref.read(themeModeProvider.notifier).set(s.first),
+          ),
         ],
       ),
     );

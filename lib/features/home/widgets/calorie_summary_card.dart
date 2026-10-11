@@ -42,8 +42,8 @@ class CalorieSummaryCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
@@ -57,23 +57,23 @@ class CalorieSummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       groupedNumber(remaining.abs()),
-                      style: AppTypography.metricHeadline.copyWith(
+                      style: context.text.metricHeadline.copyWith(
                         color: overBudget
-                            ? AppColors.error
-                            : AppColors.textPrimary,
+                            ? context.colors.error
+                            : context.colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       overBudget ? 'Calories over' : 'Calories left',
-                      style: AppTypography.bodyMedium,
+                      style: context.text.bodyMedium,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
                       'Eaten ${groupedNumber(consumed)} · '
                       'Goal ${groupedNumber(goal)}',
-                      style: AppTypography.bodySmall
-                          .copyWith(color: AppColors.textHint),
+                      style: context.text.bodySmall
+                          .copyWith(color: context.colors.textHint),
                     ),
                   ],
                 ),
@@ -82,7 +82,7 @@ class CalorieSummaryCard extends StatelessWidget {
               CalorieRing(
                 progress: progress,
                 size: 92,
-                color: overBudget ? AppColors.error : AppColors.calories,
+                color: overBudget ? context.colors.error : context.colors.calories,
                 child: streakDays == null
                     ? null
                     : AccentBadge(

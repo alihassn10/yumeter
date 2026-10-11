@@ -17,7 +17,7 @@ class ProductImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final placeholder = Icon(
       Icons.inventory_2_outlined,
-      color: AppColors.textHint,
+      color: context.colors.textHint,
       size: size * 0.45,
     );
     return ClipRRect(
@@ -25,7 +25,7 @@ class ProductImage extends StatelessWidget {
       child: SizedBox.square(
         dimension: size,
         child: ColoredBox(
-          color: AppColors.surfaceNested,
+          color: context.colors.surfaceNested,
           child: url == null
               ? placeholder
               : Image.network(
@@ -49,7 +49,7 @@ class OpenFoodFactsCredit extends StatelessWidget {
     return Text(
       'Food data from Open Food Facts, available under the Open Database '
       'Licence. Values come from product labels and may contain mistakes.',
-      style: AppTypography.bodySmall.copyWith(color: AppColors.textHint),
+      style: context.text.bodySmall.copyWith(color: context.colors.textHint),
       textAlign: TextAlign.center,
     );
   }

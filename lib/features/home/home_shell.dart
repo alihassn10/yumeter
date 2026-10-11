@@ -70,9 +70,9 @@ class _BottomNav extends StatelessWidget {
         );
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.canvas,
-        border: Border(top: BorderSide(color: AppColors.track)),
+      decoration: BoxDecoration(
+        color: context.colors.canvas,
+        border: Border(top: BorderSide(color: context.colors.track)),
       ),
       child: SafeArea(
         top: false,
@@ -106,7 +106,7 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.calories : AppColors.textHint;
+    final color = selected ? context.colors.calories : context.colors.textHint;
 
     return Semantics(
       selected: selected,
@@ -123,7 +123,7 @@ class _TabButton extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               tab.label,
-              style: AppTypography.labelSmall.copyWith(color: color),
+              style: context.text.labelSmall.copyWith(color: color),
             ),
           ],
         ),
@@ -149,14 +149,14 @@ class _LogButton extends StatelessWidget {
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: AppColors.calories,
+            color: context.colors.calories,
             shape: BoxShape.circle,
-            boxShadow: AppColors.glow(AppColors.calories),
+            boxShadow: AppColors.glow(context.colors.calories),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.add_rounded,
             size: 30,
-            color: AppColors.canvas,
+            color: context.colors.canvas,
           ),
         ),
       ),

@@ -93,16 +93,16 @@ class _CreatingPlanScreenState extends ConsumerState<CreatingPlanScreen> {
                   children: [
                     Text(
                       '${(progress * 100).round()}%',
-                      style: AppTypography.displaySmall,
+                      style: context.text.displaySmall,
                     ),
-                    Text('Building', style: AppTypography.bodySmall),
+                    Text('Building', style: context.text.bodySmall),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
               Text(
                 'Putting your plan together',
-                style: AppTypography.headlineMedium,
+                style: context.text.headlineMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -117,8 +117,8 @@ class _CreatingPlanScreenState extends ConsumerState<CreatingPlanScreen> {
               const Spacer(),
               Text(
                 'Keep the app open for a moment.',
-                style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textHint),
+                style: context.text.bodySmall
+                    .copyWith(color: context.colors.textHint),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],
@@ -152,10 +152,10 @@ class _StageRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.gutter),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.colors.surface,
           borderRadius: AppRadii.nestedShape,
           border: Border.all(
-            color: active ? AppColors.calories : Colors.transparent,
+            color: active ? context.colors.calories : Colors.transparent,
           ),
         ),
         child: Row(
@@ -163,17 +163,17 @@ class _StageRow extends StatelessWidget {
             SizedBox.square(
               dimension: 24,
               child: done
-                  ? const Icon(
+                  ? Icon(
                       Icons.check_circle_rounded,
                       size: 24,
-                      color: AppColors.success,
+                      color: context.colors.success,
                     )
                   : active
                       ? const CircularProgressIndicator(strokeWidth: 2.5)
-                      : const Icon(
+                      : Icon(
                           Icons.circle_outlined,
                           size: 24,
-                          color: AppColors.textHint,
+                          color: context.colors.textHint,
                         ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -182,9 +182,9 @@ class _StageRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(stage.title, style: AppTypography.headlineSmall),
+                  Text(stage.title, style: context.text.headlineSmall),
                   const SizedBox(height: 2),
-                  Text(stage.detail, style: AppTypography.bodySmall),
+                  Text(stage.detail, style: context.text.bodySmall),
                 ],
               ),
             ),

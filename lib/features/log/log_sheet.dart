@@ -67,7 +67,7 @@ class _LogSheetState extends ConsumerState<LogSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Log a meal', style: AppTypography.headlineMedium),
+              Text('Log a meal', style: context.text.headlineMedium),
               const SizedBox(height: AppSpacing.lg),
               MealTypeChips(
                 selected: _type,
@@ -110,7 +110,7 @@ class _LogSheetState extends ConsumerState<LogSheet> {
               ),
               if (recent.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.xl),
-                Text('Recent', style: AppTypography.headlineSmall),
+                Text('Recent', style: context.text.headlineSmall),
                 const SizedBox(height: AppSpacing.md),
                 for (final entry in recent)
                   _RecentRow(entry: entry, onAdd: () => _relog(entry)),
@@ -139,7 +139,7 @@ class _MethodTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surfaceNested,
+      color: context.colors.surfaceNested,
       borderRadius: AppRadii.nestedShape,
       child: InkWell(
         onTap: onTap,
@@ -153,17 +153,17 @@ class _MethodTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.tint(AppColors.calories),
+                  color: AppColors.tint(context.colors.calories),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 20, color: AppColors.calories),
+                child: Icon(icon, size: 20, color: context.colors.calories),
               ),
               const Spacer(),
-              Text(title, style: AppTypography.labelLarge),
+              Text(title, style: context.text.labelLarge),
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: AppTypography.bodySmall,
+                style: context.text.bodySmall,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -194,11 +194,11 @@ class _RecentRow extends StatelessWidget {
               children: [
                 Text(
                   entry.name,
-                  style: AppTypography.bodyLarge,
+                  style: context.text.bodyLarge,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text('${entry.calories} kcal', style: AppTypography.bodySmall),
+                Text('${entry.calories} kcal', style: context.text.bodySmall),
               ],
             ),
           ),

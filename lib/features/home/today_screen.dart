@@ -71,7 +71,7 @@ class TodayScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     Dates.friendlyDay(day),
-                    style: AppTypography.headlineLarge,
+                    style: context.text.headlineLarge,
                   ),
                 ),
                 if (!isToday)
@@ -107,7 +107,7 @@ class TodayScreen extends ConsumerWidget {
             DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: AppRadii.pillShape,
-                boxShadow: AppColors.glow(AppColors.calories),
+                boxShadow: AppColors.glow(context.colors.calories),
               ),
               child: ElevatedButton.icon(
                 onPressed: () => context.push(AppRoutes.scan),
@@ -119,12 +119,12 @@ class TodayScreen extends ConsumerWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text('Meals', style: AppTypography.headlineMedium),
+                  child: Text('Meals', style: context.text.headlineMedium),
                 ),
                 if (meals.isNotEmpty)
                   Text(
                     '${meals.length} logged',
-                    style: AppTypography.bodySmall,
+                    style: context.text.bodySmall,
                   ),
               ],
             ),
@@ -158,7 +158,7 @@ class _Header extends StatelessWidget {
       children: [
         const BrandMark(size: 36),
         const SizedBox(width: AppSpacing.sm),
-        Expanded(child: Text('Yumeter', style: AppTypography.headlineSmall)),
+        Expanded(child: Text('Yumeter', style: context.text.headlineSmall)),
         if (streak > 0)
           Semantics(
             label: '$streak day streak',
@@ -182,8 +182,8 @@ class _EmptyDay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
@@ -192,18 +192,18 @@ class _EmptyDay extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.tint(AppColors.calories),
+              color: AppColors.tint(context.colors.calories),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.restaurant_rounded,
-              color: AppColors.calories,
+              color: context.colors.calories,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             isToday ? 'Log your first meal' : 'Nothing logged this day',
-            style: AppTypography.headlineSmall,
+            style: context.text.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -211,7 +211,7 @@ class _EmptyDay extends StatelessWidget {
             isToday
                 ? 'Snap a photo or add the calories by hand.'
                 : 'You can still add a meal you forgot to log.',
-            style: AppTypography.bodyMedium,
+            style: context.text.bodyMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -235,15 +235,15 @@ class _MissingPlan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         children: [
           Text(
             'Finish setting up to see your daily target.',
-            style: AppTypography.headlineSmall,
+            style: context.text.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.lg),

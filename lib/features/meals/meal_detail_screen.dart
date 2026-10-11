@@ -50,7 +50,7 @@ class MealDetailScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: const Text('Delete'),
           ),
         ],
@@ -123,7 +123,7 @@ class MealDetailScreen extends ConsumerWidget {
         appBar: AppBar(),
         body: Center(
           child: Text('This meal is no longer in your log.',
-              style: AppTypography.bodyMedium),
+              style: context.text.bodyMedium),
         ),
       );
     }
@@ -157,20 +157,20 @@ class MealDetailScreen extends ConsumerWidget {
               _MealPhoto(path: path),
               const SizedBox(height: AppSpacing.lg),
             ],
-            Text(entry.name, style: AppTypography.headlineMedium),
+            Text(entry.name, style: context.text.headlineMedium),
             const SizedBox(height: AppSpacing.xs),
             Text(
               '${entry.type.label} · ${Dates.friendlyDay(entry.loggedAt)}, '
               '${Dates.time(entry.loggedAt)}',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
             ),
             const SizedBox(height: 2),
-            Text(_sourceLabel(entry.source), style: AppTypography.bodySmall),
+            Text(_sourceLabel(entry.source), style: context.text.bodySmall),
             const SizedBox(height: AppSpacing.lg),
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: AppRadii.cardShape,
               ),
               child: Column(
@@ -179,11 +179,11 @@ class MealDetailScreen extends ConsumerWidget {
                   Text.rich(
                     TextSpan(
                       text: groupedNumber(entry.calories),
-                      style: AppTypography.metricHeadline,
+                      style: context.text.metricHeadline,
                       children: [
                         TextSpan(
                           text: ' kcal',
-                          style: AppTypography.bodyMedium,
+                          style: context.text.bodyMedium,
                         ),
                       ],
                     ),
@@ -250,7 +250,7 @@ class _MealPhotoState extends ConsumerState<_MealPhoto> {
       child: AspectRatio(
         aspectRatio: 4 / 3,
         child: ColoredBox(
-          color: AppColors.surface,
+          color: context.colors.surface,
           child: FutureBuilder<String>(
             future: _url,
             builder: (context, snapshot) {
@@ -285,14 +285,14 @@ class _PhotoPlaceholder extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.image_not_supported_outlined,
-            color: AppColors.textSecondary,
+            color: context.colors.textSecondary,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Photo unavailable offline',
-            style: AppTypography.bodySmall,
+            style: context.text.bodySmall,
           ),
         ],
       ),
@@ -346,7 +346,7 @@ class _EditSheetState extends State<_EditSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Edit meal', style: AppTypography.headlineSmall),
+            Text('Edit meal', style: context.text.headlineSmall),
             const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _name,

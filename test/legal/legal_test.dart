@@ -28,13 +28,16 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       theme: AppTheme.dark,
       home: Scaffold(
-        body: ListView(
-          children: markdownBlocks(
-            '# Title\n\n'
-            'Intro **bold part** end.\n\n'
-            '## Section\n\n'
-            '- first item\n'
-            '- second item\n',
+        body: Builder(
+          builder: (context) => ListView(
+            children: markdownBlocks(
+              context,
+              '# Title\n\n'
+              'Intro **bold part** end.\n\n'
+              '## Section\n\n'
+              '- first item\n'
+              '- second item\n',
+            ),
           ),
         ),
       ),

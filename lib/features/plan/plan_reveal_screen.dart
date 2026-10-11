@@ -33,7 +33,7 @@ class PlanRevealScreen extends ConsumerWidget {
               children: [
                 Text(
                   'We need a few answers first.',
-                  style: AppTypography.headlineSmall,
+                  style: context.text.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSpacing.lg),
@@ -68,11 +68,11 @@ class PlanRevealScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: AppSpacing.lg),
-                    const Center(
+                    Center(
                       child: AccentBadge(
                         label: 'Your plan is ready',
                         icon: Icons.check_circle_rounded,
-                        color: AppColors.success,
+                        color: context.colors.success,
                         tinted: true,
                       ),
                     ),
@@ -80,9 +80,9 @@ class PlanRevealScreen extends ConsumerWidget {
                     _DailyTarget(calories: plan.calories),
                     if (plan.clampedToFloor) ...[
                       const SizedBox(height: AppSpacing.md),
-                      const _Notice(
+                      _Notice(
                         icon: Icons.info_outline_rounded,
-                        color: AppColors.carbs,
+                        color: context.colors.carbs,
                         text:
                             'We raised your target to keep it above a safe '
                             'minimum, so you will move a little slower than '
@@ -102,9 +102,9 @@ class PlanRevealScreen extends ConsumerWidget {
                       ),
                     ],
                     const SizedBox(height: AppSpacing.lg),
-                    const _Notice(
+                    _Notice(
                       icon: Icons.health_and_safety_outlined,
-                      color: AppColors.textSecondary,
+                      color: context.colors.textSecondary,
                       text:
                           'These are estimates from a standard formula, not a '
                           'measurement, and not medical advice. Adjust as you '
@@ -147,24 +147,24 @@ class _DailyTarget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         children: [
-          Text('Daily calorie target', style: AppTypography.labelMedium),
+          Text('Daily calorie target', style: context.text.labelMedium),
           const SizedBox(height: AppSpacing.sm),
           Text.rich(
             TextSpan(
               text: '$calories',
-              style: AppTypography.displayLarge
-                  .copyWith(color: AppColors.calories),
+              style: context.text.displayLarge
+                  .copyWith(color: context.colors.calories),
               children: [
                 TextSpan(
                   text: '  kcal',
-                  style: AppTypography.headlineSmall
-                      .copyWith(color: AppColors.textSecondary),
+                  style: context.text.headlineSmall
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ],
             ),
@@ -183,21 +183,21 @@ class _MacroBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rows = [
-      ('Protein', plan.proteinGrams, 4, AppColors.protein),
-      ('Carbs', plan.carbGrams, 4, AppColors.carbs),
-      ('Fat', plan.fatGrams, 9, AppColors.fat),
+      ('Protein', plan.proteinGrams, 4, context.colors.protein),
+      ('Carbs', plan.carbGrams, 4, context.colors.carbs),
+      ('Fat', plan.fatGrams, 9, context.colors.fat),
     ];
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Daily macros', style: AppTypography.headlineSmall),
+          Text('Daily macros', style: context.text.headlineSmall),
           const SizedBox(height: AppSpacing.lg),
           for (final (i, (label, grams, kcalPerGram, color))
               in rows.indexed) ...[
@@ -244,15 +244,15 @@ class _MacroRow extends StatelessWidget {
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Text(label, style: AppTypography.bodyLarge)),
+            Expanded(child: Text(label, style: context.text.bodyLarge)),
             Text(
               '${grams}g',
-              style: AppTypography.metricSub.copyWith(color: color),
+              style: context.text.metricSub.copyWith(color: color),
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
               '${(share * 100).round()}%',
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
             ),
           ],
         ),
@@ -267,7 +267,7 @@ class _MacroRow extends StatelessWidget {
               value: value,
               minHeight: 6,
               color: color,
-              backgroundColor: AppColors.track,
+              backgroundColor: context.colors.track,
             ),
           ),
         ),
@@ -287,14 +287,14 @@ class _HowWeGotThere extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('How we got there', style: AppTypography.headlineSmall),
+          Text('How we got there', style: context.text.headlineSmall),
           const SizedBox(height: AppSpacing.md),
           _Line(
             label: 'Burned at rest',
@@ -336,11 +336,11 @@ class _Line extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         children: [
-          Expanded(child: Text(label, style: AppTypography.bodyMedium)),
+          Expanded(child: Text(label, style: context.text.bodyMedium)),
           Text(
             value,
-            style: AppTypography.labelLarge.copyWith(
-              color: highlight ? AppColors.calories : AppColors.textPrimary,
+            style: context.text.labelLarge.copyWith(
+              color: highlight ? context.colors.calories : context.colors.textPrimary,
             ),
           ),
         ],
@@ -373,25 +373,25 @@ class _GoalProjection extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Row(
         children: [
-          const Icon(Icons.flag_rounded, color: AppColors.calories),
+          Icon(Icons.flag_rounded, color: context.colors.calories),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('On this pace', style: AppTypography.bodySmall),
+                Text('On this pace', style: context.text.bodySmall),
                 const SizedBox(height: 2),
                 Text(
                   '$weight around '
                   '${_months[date.month - 1]} ${date.day}, ${date.year}',
-                  style: AppTypography.headlineSmall,
+                  style: context.text.headlineSmall,
                 ),
               ],
             ),
@@ -418,7 +418,7 @@ class _Notice extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.gutter),
       decoration: BoxDecoration(
-        color: AppColors.surfaceNested,
+        color: context.colors.surfaceNested,
         borderRadius: AppRadii.nestedShape,
       ),
       child: Row(
@@ -426,7 +426,7 @@ class _Notice extends StatelessWidget {
         children: [
           Icon(icon, size: 20, color: color),
           const SizedBox(width: AppSpacing.md),
-          Expanded(child: Text(text, style: AppTypography.bodySmall)),
+          Expanded(child: Text(text, style: context.text.bodySmall)),
         ],
       ),
     );

@@ -68,13 +68,13 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
               Text(
                 'Reach your goals with\neffortless AI tracking',
                 textAlign: TextAlign.center,
-                style: AppTypography.headlineLarge,
+                style: context.text.headlineLarge,
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 'Snap a photo, get instant macros, and stay on track.',
                 textAlign: TextAlign.center,
-                style: AppTypography.bodyMedium,
+                style: context.text.bodyMedium,
               ),
               const SizedBox(height: AppSpacing.lg),
               const Wrap(
@@ -151,8 +151,8 @@ class _SamplePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
@@ -163,14 +163,14 @@ class _SamplePreview extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Grilled salmon bowl',
-                  style: AppTypography.headlineSmall,
+                  style: context.text.headlineSmall,
                 ),
               ),
-              Text('540 kcal', style: AppTypography.labelLarge),
+              Text('540 kcal', style: context.text.labelLarge),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          const Row(
+          Row(
             spacing: AppSpacing.sm,
             children: [
               Expanded(child: MacroStat.protein(grams: 46, goalGrams: 60)),
@@ -218,8 +218,8 @@ class _SignInButton extends StatelessWidget {
         icon: leading,
         label: Text(label),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.textPrimary,
-          foregroundColor: AppColors.canvas,
+          backgroundColor: context.colors.textPrimary,
+          foregroundColor: context.colors.canvas,
         ),
       );
     }
@@ -237,7 +237,7 @@ class _Agreement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = AppTypography.bodySmall.copyWith(color: AppColors.textHint);
+    final style = context.text.bodySmall.copyWith(color: context.colors.textHint);
     Widget link(String label, String route) => Semantics(
           link: true,
           child: InkWell(
@@ -248,7 +248,7 @@ class _Agreement extends StatelessWidget {
               child: Text(
                 label,
                 style: style.copyWith(
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                   decoration: TextDecoration.underline,
                 ),
               ),

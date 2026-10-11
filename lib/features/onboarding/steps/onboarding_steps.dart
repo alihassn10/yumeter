@@ -129,9 +129,9 @@ class _BirthDateStepState extends ConsumerState<BirthDateStep> {
               child: Text(
                 '$value',
                 style: isSelected
-                    ? AppTypography.displaySmall
-                    : AppTypography.headlineMedium
-                        .copyWith(color: AppColors.textHint),
+                    ? context.text.displaySmall
+                    : context.text.headlineMedium
+                        .copyWith(color: context.colors.textHint),
               ),
             );
           },
@@ -189,7 +189,7 @@ class _MeasurementsStepState extends ConsumerState<MeasurementsStep> {
           onChanged: controller.setUnits,
         ),
         const SizedBox(height: AppSpacing.xl),
-        Text('Height', style: AppTypography.labelMedium),
+        Text('Height', style: context.text.labelMedium),
         const SizedBox(height: AppSpacing.md),
         if (metric)
           RulerPicker(
@@ -216,7 +216,7 @@ class _MeasurementsStepState extends ConsumerState<MeasurementsStep> {
                 controller.setMeasurements(heightCm: Units.inchToCm(v)),
           ),
         const SizedBox(height: AppSpacing.xl),
-        Text('Weight', style: AppTypography.labelMedium),
+        Text('Weight', style: context.text.labelMedium),
         const SizedBox(height: AppSpacing.md),
         if (metric)
           RulerPicker(
@@ -256,8 +256,8 @@ class _UnitToggle extends StatelessWidget {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: AppRadii.pillShape,
         ),
         child: Row(
@@ -277,16 +277,16 @@ class _UnitToggle extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: units == system
-                        ? AppColors.calories
+                        ? context.colors.calories
                         : Colors.transparent,
                     borderRadius: AppRadii.pillShape,
                   ),
                   child: Text(
                     label,
-                    style: AppTypography.labelMedium.copyWith(
+                    style: context.text.labelMedium.copyWith(
                       color: units == system
-                          ? AppColors.canvas
-                          : AppColors.textSecondary,
+                          ? context.colors.canvas
+                          : context.colors.textSecondary,
                     ),
                   ),
                 ),
@@ -401,7 +401,7 @@ class TargetWeightStep extends ConsumerWidget {
                         '${delta < 0 ? 'lose' : 'gain'}'
                     : '${Units.kgToLb(delta.abs()).toStringAsFixed(1)} lb to '
                         '${delta < 0 ? 'lose' : 'gain'}',
-            style: AppTypography.bodyMedium,
+            style: context.text.bodyMedium,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -433,9 +433,9 @@ class PaceStep extends ConsumerWidget {
         Center(
           child: Column(
             children: [
-              Text(display, style: AppTypography.displaySmall),
+              Text(display, style: context.text.displaySmall),
               const SizedBox(height: AppSpacing.xs),
-              Text('per week', style: AppTypography.bodyMedium),
+              Text('per week', style: context.text.bodyMedium),
             ],
           ),
         ),
@@ -445,16 +445,16 @@ class PaceStep extends ConsumerWidget {
           min: 0.1,
           max: 1.2,
           divisions: 22,
-          activeColor: AppColors.calories,
-          inactiveColor: AppColors.track,
+          activeColor: context.colors.calories,
+          inactiveColor: context.colors.track,
           onChanged: controller.setPace,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Gradual', style: AppTypography.bodySmall),
-            Text('Steady', style: AppTypography.bodySmall),
-            Text('Fast', style: AppTypography.bodySmall),
+            Text('Gradual', style: context.text.bodySmall),
+            Text('Steady', style: context.text.bodySmall),
+            Text('Fast', style: context.text.bodySmall),
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -462,19 +462,19 @@ class PaceStep extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(AppSpacing.gutter),
             decoration: BoxDecoration(
-              color: AppColors.tint(AppColors.carbs),
+              color: AppColors.tint(context.colors.carbs),
               borderRadius: AppRadii.nestedShape,
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline_rounded,
-                    size: 20, color: AppColors.carbs),
+                Icon(Icons.info_outline_rounded,
+                    size: 20, color: context.colors.carbs),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(
                     'A faster pace is harder to sustain and we will hold your '
                     'target above a safe minimum.',
-                    style: AppTypography.bodySmall,
+                    style: context.text.bodySmall,
                   ),
                 ),
               ],

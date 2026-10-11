@@ -97,7 +97,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
     final code = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: context.colors.surface,
         title: const Text('Type the barcode'),
         content: TextField(
           controller: controller,
@@ -168,7 +168,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppColors.calories,
+                                  color: context.colors.calories,
                                   width: 3,
                                 ),
                                 borderRadius:
@@ -196,7 +196,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
                   if (_problem case final problem?) ...[
                     Text(
                       problem,
-                      style: AppTypography.bodyMedium,
+                      style: context.text.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -213,7 +213,7 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
                   ] else
                     Text(
                       'Line the barcode up inside the box.',
-                      style: AppTypography.bodyMedium,
+                      style: context.text.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
                   TextButton(
@@ -238,7 +238,7 @@ class _CameraError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.surface,
+      color: context.colors.surface,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -248,7 +248,7 @@ class _CameraError extends StatelessWidget {
                     'type the barcode instead.'
                 : 'The camera is not available. You can type the barcode '
                     'instead.',
-            style: AppTypography.bodyMedium,
+            style: context.text.bodyMedium,
             textAlign: TextAlign.center,
           ),
         ),

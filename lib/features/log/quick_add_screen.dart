@@ -94,7 +94,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: context.colors.surface,
         title: const Text('Name this meal'),
         content: TextField(
           controller: controller,
@@ -198,11 +198,11 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                           ActionChip(
                             label: Text('+$by'),
                             onPressed: () => _increment(by),
-                            backgroundColor: AppColors.track,
+                            backgroundColor: context.colors.track,
                             side: BorderSide.none,
                             shape: const StadiumBorder(),
-                            labelStyle: AppTypography.labelMedium
-                                .copyWith(color: AppColors.textPrimary),
+                            labelStyle: context.text.labelMedium
+                                .copyWith(color: context.colors.textPrimary),
                           ),
                       ],
                     ),
@@ -210,10 +210,10 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                     Row(
                       spacing: AppSpacing.sm,
                       children: [
-                        for (final (field, color) in const [
-                          (QuickAddField.protein, AppColors.protein),
-                          (QuickAddField.carbs, AppColors.carbs),
-                          (QuickAddField.fat, AppColors.fat),
+                        for (final (field, color) in [
+                          (QuickAddField.protein, context.colors.protein),
+                          (QuickAddField.carbs, context.colors.carbs),
+                          (QuickAddField.fat, context.colors.fat),
                         ])
                           Expanded(
                             child: _MacroField(
@@ -234,17 +234,17 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                       child: _macrosDisagree
                           ? Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.info_outline_rounded,
                                   size: 16,
-                                  color: AppColors.carbs,
+                                  color: context.colors.carbs,
                                 ),
                                 const SizedBox(width: AppSpacing.sm),
                                 Expanded(
                                   child: Text(
                                     'Macros add up to '
                                     '${groupedNumber(_macroCalories)} kcal',
-                                    style: AppTypography.bodySmall,
+                                    style: context.text.bodySmall,
                                   ),
                                 ),
                                 TextButton(
@@ -320,17 +320,17 @@ class _CalorieDisplay extends StatelessWidget {
             Text.rich(
               TextSpan(
                 text: groupedNumber(calories),
-                style: AppTypography.displayLarge.copyWith(
+                style: context.text.displayLarge.copyWith(
                   fontSize: 56,
                   color: calories == 0
-                      ? AppColors.textHint
-                      : AppColors.textPrimary,
+                      ? context.colors.textHint
+                      : context.colors.textPrimary,
                 ),
                 children: [
                   TextSpan(
                     text: ' kcal',
-                    style: AppTypography.headlineSmall
-                        .copyWith(color: AppColors.textSecondary),
+                    style: context.text.headlineSmall
+                        .copyWith(color: context.colors.textSecondary),
                   ),
                 ],
               ),
@@ -341,7 +341,7 @@ class _CalorieDisplay extends StatelessWidget {
               width: 64,
               height: 3,
               decoration: BoxDecoration(
-                color: active ? AppColors.calories : Colors.transparent,
+                color: active ? context.colors.calories : Colors.transparent,
                 borderRadius: BorderRadius.circular(AppRadii.pill),
               ),
             ),
@@ -384,7 +384,7 @@ class _MacroField extends StatelessWidget {
             vertical: AppSpacing.md,
           ),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: context.colors.surface,
             borderRadius: AppRadii.nestedShape,
             border: Border.all(
               color: active ? color : Colors.transparent,
@@ -396,12 +396,12 @@ class _MacroField extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: AppTypography.labelSmall.copyWith(color: color),
+                style: context.text.labelSmall.copyWith(color: color),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 grams == 0 ? '–' : '${grams}g',
-                style: AppTypography.metricSub,
+                style: context.text.metricSub,
               ),
             ],
           ),
@@ -445,7 +445,7 @@ class _Keypad extends StatelessWidget {
 
     Widget digit(int d) => key(
           onTap: () => onDigit(d),
-          child: Text('$d', style: AppTypography.headlineMedium),
+          child: Text('$d', style: context.text.headlineMedium),
         );
 
     return Padding(
@@ -465,17 +465,17 @@ class _Keypad extends StatelessWidget {
                 semanticLabel: 'Clear',
                 child: Text(
                   'C',
-                  style: AppTypography.headlineMedium
-                      .copyWith(color: AppColors.textSecondary),
+                  style: context.text.headlineMedium
+                      .copyWith(color: context.colors.textSecondary),
                 ),
               ),
               digit(0),
               key(
                 onTap: onBackspace,
                 semanticLabel: 'Delete',
-                child: const Icon(
+                child: Icon(
                   Icons.backspace_outlined,
-                  color: AppColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],

@@ -167,7 +167,7 @@ class _FoodSearchScreenState extends ConsumerState<FoodSearchScreen> {
               ),
               if (recent.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.xl),
-                Text('Recent', style: AppTypography.headlineSmall),
+                Text('Recent', style: context.text.headlineSmall),
                 const SizedBox(height: AppSpacing.sm),
                 for (final entry in recent)
                   Padding(
@@ -196,7 +196,7 @@ class _ResultTile extends StatelessWidget {
         ? Portion(product, 100)
         : Portion(product, perServing);
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -213,23 +213,23 @@ class _ResultTile extends StatelessWidget {
                   children: [
                     Text(
                       product.name,
-                      style: AppTypography.bodyLarge,
+                      style: context.text.bodyLarge,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (product.brand case final brand?)
-                      Text(brand, style: AppTypography.bodySmall),
+                      Text(brand, style: context.text.bodySmall),
                     const SizedBox(height: 2),
                     Text(
                       '${shown.calories} kcal · P ${shown.proteinGrams}g · '
                       'C ${shown.carbGrams}g · F ${shown.fatGrams}g '
                       '${perServing == null ? 'per 100 g' : 'per serving'}',
-                      style: AppTypography.labelSmall,
+                      style: context.text.labelSmall,
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded, color: AppColors.textHint),
+              Icon(Icons.chevron_right_rounded, color: context.colors.textHint),
             ],
           ),
         ),
@@ -247,13 +247,13 @@ class _RecentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
       child: ListTile(
         title: Text(entry.name, maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text(
           '${entry.calories} kcal',
-          style: AppTypography.bodySmall,
+          style: context.text.bodySmall,
         ),
         trailing: IconButton.filledTonal(
           onPressed: onAdd,
@@ -281,7 +281,7 @@ class _Shortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: context.colors.surface,
       shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -290,16 +290,16 @@ class _Shortcut extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              Icon(icon, color: AppColors.calories),
+              Icon(icon, color: context.colors.calories),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AppTypography.labelLarge),
+                    Text(title, style: context.text.labelLarge),
                     Text(
                       subtitle,
-                      style: AppTypography.bodySmall,
+                      style: context.text.bodySmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -326,7 +326,7 @@ class _Message extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
       child: Column(
         children: [
-          Text(text, style: AppTypography.bodyMedium, textAlign: TextAlign.center),
+          Text(text, style: context.text.bodyMedium, textAlign: TextAlign.center),
           if (action case (final label, final onPressed)) ...[
             const SizedBox(height: AppSpacing.md),
             OutlinedButton(onPressed: onPressed, child: Text(label)),

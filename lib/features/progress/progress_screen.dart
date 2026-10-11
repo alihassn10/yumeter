@@ -66,7 +66,7 @@ class ProgressScreen extends ConsumerWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text('Progress', style: AppTypography.headlineLarge),
+                  child: Text('Progress', style: context.text.headlineLarge),
                 ),
                 if (streak > 0) _StreakChip(days: streak),
               ],
@@ -104,13 +104,13 @@ class ProgressScreen extends ConsumerWidget {
                   Text(
                     '${summary.loggedDays} of ${summary.daysInRange} days '
                     'logged',
-                    style: AppTypography.bodySmall,
+                    style: context.text.bodySmall,
                   ),
                   if (plan != null)
                     Text(
                       'Dashed line: your ${groupedNumber(plan.calories)} kcal '
                       'target',
-                      style: AppTypography.bodySmall,
+                      style: context.text.bodySmall,
                     ),
                 ],
               ),
@@ -210,7 +210,7 @@ class ProgressScreen extends ConsumerWidget {
                                 'weight to start your trend.'
                             : 'One weigh-in so far. Log another to see your '
                                 'trend.',
-                        style: AppTypography.bodyMedium,
+                        style: context.text.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -235,14 +235,14 @@ class ProgressScreen extends ConsumerWidget {
                       child: Text(
                         'No macros logged in this period. Photo meals and '
                         'quick adds with macros show up here.',
-                        style: AppTypography.bodyMedium,
+                        style: context.text.bodyMedium,
                       ),
                     )
                   : MacroSplitBar(split: summary.macros!),
             ),
             if (weights.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
-              Text('Recent weigh-ins', style: AppTypography.labelLarge),
+              Text('Recent weigh-ins', style: context.text.labelLarge),
               const SizedBox(height: AppSpacing.sm),
               for (final w in weights.reversed.take(5))
                 Padding(
@@ -290,17 +290,17 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.cardShape,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, style: AppTypography.headlineSmall),
+          Text(title, style: context.text.headlineSmall),
           if (subtitle case final s?) ...[
             const SizedBox(height: 2),
-            Text(s, style: AppTypography.bodySmall),
+            Text(s, style: context.text.bodySmall),
           ],
           const SizedBox(height: AppSpacing.md),
           child,
@@ -329,8 +329,8 @@ class _Stat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.gutter),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: AppRadii.nestedShape,
       ),
       child: Column(
@@ -338,12 +338,12 @@ class _Stat extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: AppColors.textSecondary),
+              Icon(icon, size: 16, color: context.colors.textSecondary),
               const SizedBox(width: AppSpacing.xs),
               Flexible(
                 child: Text(
                   label,
-                  style: AppTypography.bodySmall,
+                  style: context.text.bodySmall,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -354,16 +354,16 @@ class _Stat extends StatelessWidget {
           Text.rich(
             TextSpan(
               text: value,
-              style: AppTypography.metricSub,
+              style: context.text.metricSub,
               children: [
-                TextSpan(text: ' $unit', style: AppTypography.bodySmall),
+                TextSpan(text: ' $unit', style: context.text.bodySmall),
               ],
             ),
           ),
           if (detail case final d?)
             Text(
               d,
-              style: AppTypography.bodySmall,
+              style: context.text.bodySmall,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -386,21 +386,21 @@ class _StreakChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.tint(AppColors.calories),
+        color: AppColors.tint(context.colors.calories),
         borderRadius: AppRadii.pillShape,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.local_fire_department_rounded,
             size: 16,
-            color: AppColors.calories,
+            color: context.colors.calories,
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
             '$days ${days == 1 ? 'day' : 'days'}',
-            style: AppTypography.labelMedium,
+            style: context.text.labelMedium,
           ),
         ],
       ),
@@ -439,20 +439,20 @@ class _WeighInTile extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: AppColors.tint(AppColors.error),
+          color: AppColors.tint(context.colors.error),
           borderRadius: AppRadii.nestedShape,
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
+        child: Icon(Icons.delete_outline_rounded, color: context.colors.error),
       ),
       child: Material(
-        color: AppColors.surface,
+        color: context.colors.surface,
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.nestedShape),
         child: ListTile(
           leading: const Icon(Icons.monitor_weight_outlined),
           title: Text(text),
           subtitle: Text(
             Dates.friendlyDay(entry.day),
-            style: AppTypography.bodySmall,
+            style: context.text.bodySmall,
           ),
         ),
       ),

@@ -76,12 +76,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             Text.rich(
               TextSpan(
                 text: 'Yumeter',
-                style: AppTypography.displaySmall,
+                style: context.text.displaySmall,
                 children: [
                   TextSpan(
                     text: '.',
-                    style: AppTypography.displaySmall
-                        .copyWith(color: AppColors.calories),
+                    style: context.text.displaySmall
+                        .copyWith(color: context.colors.calories),
                   ),
                 ],
               ),
@@ -89,7 +89,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               'Snap a meal, know the calories',
-              style: AppTypography.bodyMedium,
+              style: context.text.bodyMedium,
             ).animate(delay: 400.ms).fadeIn(duration: 500.ms),
           ],
         ),

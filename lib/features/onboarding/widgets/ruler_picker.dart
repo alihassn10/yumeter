@@ -111,7 +111,7 @@ class _RulerPickerState extends State<RulerPicker> {
 
     return Column(
       children: [
-        Text(label(_valueOf(_index)), style: AppTypography.displaySmall),
+        Text(label(_valueOf(_index)), style: context.text.displaySmall),
         const SizedBox(height: AppSpacing.lg),
         SizedBox(
           height: widget.height,
@@ -161,7 +161,7 @@ class _RulerPickerState extends State<RulerPicker> {
                       width: 3,
                       height: _tickZone,
                       decoration: BoxDecoration(
-                        color: AppColors.calories,
+                        color: context.colors.calories,
                         borderRadius: BorderRadius.circular(AppRadii.pill),
                       ),
                     ),
@@ -196,7 +196,7 @@ class _Tick extends StatelessWidget {
             child: Container(
               width: 1.5,
               height: major ? 32 : 18,
-              color: major ? AppColors.textSecondary : AppColors.track,
+              color: major ? context.colors.textSecondary : context.colors.track,
             ),
           ),
         ),
@@ -204,7 +204,7 @@ class _Tick extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(
             label!,
-            style: AppTypography.labelSmall,
+            style: context.text.labelSmall,
             maxLines: 1,
             overflow: TextOverflow.visible,
             softWrap: false,
