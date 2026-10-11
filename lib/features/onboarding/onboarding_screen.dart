@@ -17,7 +17,7 @@ class OnboardingScreen extends ConsumerWidget {
     final state = ref.watch(onboardingControllerProvider);
     final controller = ref.read(onboardingControllerProvider.notifier);
 
-    final (eyebrow, title, subtitle, content) = _contentFor(state.step);
+    final (eyebrow, title, subtitle, content) = onboardingStepContent(state.step);
 
     return OnboardingScaffold(
       step: state.step.number,
@@ -54,7 +54,11 @@ class OnboardingScreen extends ConsumerWidget {
     );
   }
 
-  (String?, String, String?, Widget) _contentFor(OnboardingStep step) =>
+}
+
+/// The eyebrow, question, hint and input for each step. Shared with the
+/// settings editors, so changing an answer later looks exactly like giving it.
+(String?, String, String?, Widget) onboardingStepContent(OnboardingStep step) =>
       switch (step) {
         OnboardingStep.sex => (
             'About you',
@@ -105,4 +109,3 @@ class OnboardingScreen extends ConsumerWidget {
             const DietStep(),
           ),
       };
-}

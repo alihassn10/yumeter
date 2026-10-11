@@ -58,6 +58,11 @@ class OnboardingController extends Notifier<OnboardingState> {
   @override
   OnboardingState build() => const OnboardingState();
 
+  /// Starts from saved answers, so a settings editor can reuse the quiz's
+  /// steps on an existing profile.
+  void load(OnboardingAnswers answers) =>
+      state = OnboardingState(answers: answers);
+
   void _update(OnboardingAnswers answers) =>
       state = state.copyWith(answers: answers);
 
