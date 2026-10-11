@@ -69,6 +69,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Privacy policy and terms, shown in-app and publishable as-is on the web.
+  assets:
+    - assets/legal/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -76,12 +76,7 @@ class WelcomeScreen extends StatelessWidget {
                 onPressed: () => context.push(AppRoutes.signIn),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Text(
-                'By continuing you agree to our Terms and Privacy Policy.',
-                textAlign: TextAlign.center,
-                style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.textHint),
-              ),
+              const _Agreement(),
             ],
           )
               .animate()
@@ -180,6 +175,45 @@ class _SignInButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon),
       label: Text(label),
+    );
+  }
+}
+
+/// The agreement line, with both documents one tap away before sign-up.
+class _Agreement extends StatelessWidget {
+  const _Agreement();
+
+  @override
+  Widget build(BuildContext context) {
+    final style = AppTypography.bodySmall.copyWith(color: AppColors.textHint);
+    Widget link(String label, String route) => Semantics(
+          link: true,
+          child: InkWell(
+            onTap: () => context.push(route),
+            child: Padding(
+              // A taller hit area than the text itself.
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: Text(
+                label,
+                style: style.copyWith(
+                  color: AppColors.textSecondary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        );
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text('By continuing you agree to our ', style: style),
+        link('Terms of use', AppRoutes.terms),
+        Text(' and ', style: style),
+        link('Privacy policy', AppRoutes.privacy),
+        Text('.', style: style),
+      ],
     );
   }
 }

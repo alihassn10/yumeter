@@ -29,4 +29,8 @@ abstract final class AppRoutes {
   static String mealDetail(String id) => '/meal/$id';
 
   static const deleteAccount = '/settings/delete-account';
+
+  // Legal documents, open to everyone including before sign-in.
+  static const privacy = '/legal/privacy';
+  static const terms = '/legal/terms';
 }

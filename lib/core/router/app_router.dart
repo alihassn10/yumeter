@@ -5,6 +5,7 @@ import '../../features/food/barcode_scan_screen.dart';
 import '../../features/food/food_product_screen.dart';
 import '../../features/food/food_search_screen.dart';
 import '../../features/home/home_shell.dart';
+import '../../features/legal/legal_screen.dart';
 import '../../features/home/today_screen.dart';
 import '../../features/log/quick_add_screen.dart';
 import '../../features/meals/domain/meal_entry.dart';
@@ -124,6 +125,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.deleteAccount,
       builder: (_, _) => const DeleteAccountScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.privacy,
+      builder: (_, _) => const LegalScreen(document: LegalDocument.privacy),
+    ),
+    GoRoute(
+      path: AppRoutes.terms,
+      builder: (_, _) => const LegalScreen(document: LegalDocument.terms),
     ),
     GoRoute(
       path: AppRoutes.foodSearch,

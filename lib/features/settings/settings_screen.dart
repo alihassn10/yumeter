@@ -217,6 +217,21 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
+            const _SectionTitle('Legal'),
+            _Group(
+              children: [
+                _Row(
+                  icon: Icons.shield_outlined,
+                  title: 'Privacy policy',
+                  onTap: () => context.push(AppRoutes.privacy),
+                ),
+                _Row(
+                  icon: Icons.description_outlined,
+                  title: 'Terms of use',
+                  onTap: () => context.push(AppRoutes.terms),
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.xl),
             Text(
               'Yumeter gives estimates from a standard formula and from '
