@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yumeter/core/storage/preferences.dart';
 import 'package:yumeter/core/storage/profile_remote.dart';
+import 'package:yumeter/features/auth/data/account_remote.dart';
 import 'package:yumeter/features/auth/data/auth_repository.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/onboarding/domain/onboarding_answers.dart';
@@ -44,12 +45,14 @@ List<Override> testOverrides(
   FakeAuthRepository? auth,
   FakeMealRemote? meals,
   FakeProfileRemote? profiles,
+  FakeAccountRemote? account,
 }) =>
     [
       sharedPreferencesProvider.overrideWithValue(prefs),
       authRepositoryProvider.overrideWithValue(auth ?? FakeAuthRepository()),
       mealRemoteProvider.overrideWithValue(meals ?? FakeMealRemote()),
       profileRemoteProvider.overrideWithValue(profiles ?? FakeProfileRemote()),
+      accountRemoteProvider.overrideWithValue(account ?? FakeAccountRemote()),
     ];
 
 ProviderContainer testContainer(
@@ -57,6 +60,7 @@ ProviderContainer testContainer(
   FakeAuthRepository? auth,
   FakeMealRemote? meals,
   FakeProfileRemote? profiles,
+  FakeAccountRemote? account,
 }) =>
     ProviderContainer(
       overrides: testOverrides(
@@ -64,5 +68,6 @@ ProviderContainer testContainer(
         auth: auth,
         meals: meals,
         profiles: profiles,
+        account: account,
       ),
     );

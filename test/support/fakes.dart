@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:yumeter/core/storage/profile_remote.dart';
+import 'package:yumeter/features/auth/data/account_remote.dart';
 import 'package:yumeter/features/auth/data/auth_repository.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/meals/domain/meal_entry.dart';
@@ -116,6 +117,18 @@ class FakeMealPhotoService implements MealPhotoService {
 
   @override
   Future<void> remove(String photoPath) async => removed.add(photoPath);
+}
+
+/// Records deletions; set [failure] to make the next one fail that way.
+class FakeAccountRemote implements AccountRemote {
+  AccountDeletionFailure? failure;
+  int deletions = 0;
+
+  @override
+  Future<void> deleteAccount() async {
+    if (failure case final reason?) throw AccountDeletionException(reason);
+    deletions++;
+  }
 }
 
 class FakeProfileRemote implements ProfileRemote {

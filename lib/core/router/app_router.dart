@@ -13,6 +13,7 @@ import '../../features/plan/plan_reveal_screen.dart';
 import '../../features/scan/domain/picked_photo.dart';
 import '../../features/scan/meal_result_screen.dart';
 import '../../features/scan/scan_screen.dart';
+import '../../features/settings/delete_account_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
@@ -110,10 +111,13 @@ final appRouter = GoRouter(
       builder: (_, state) =>
           MealResultScreen(photo: state.extra! as PickedPhoto),
     ),
+    GoRoute(
+      path: AppRoutes.deleteAccount,
+      builder: (_, _) => const DeleteAccountScreen(),
+    ),
     for (final (path, title) in const [
       (AppRoutes.foodSearch, 'Food search'),
       (AppRoutes.barcodeResult, 'Barcode result'),
-      (AppRoutes.deleteAccount, 'Delete account'),
     ])
       GoRoute(path: path, builder: (_, _) => _Placeholder(title: title)),
   ],

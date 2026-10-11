@@ -87,6 +87,20 @@ class SettingsScreen extends ConsumerWidget {
                   title: const Text('Sign out'),
                   onTap: user == null ? null : () => _signOut(context, ref),
                 ),
+                const Divider(height: 1, color: AppColors.track),
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_forever_rounded,
+                    color: AppColors.error,
+                  ),
+                  title: const Text(
+                    'Delete account',
+                    style: TextStyle(color: AppColors.error),
+                  ),
+                  onTap: user == null
+                      ? null
+                      : () => context.push(AppRoutes.deleteAccount),
+                ),
               ],
             ),
           ),

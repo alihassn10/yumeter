@@ -11,6 +11,7 @@ import '../../meals/data/meal_log_store.dart';
 import '../../meals/state/meal_log_controller.dart';
 import '../../onboarding/domain/onboarding_answers.dart';
 import '../../onboarding/state/onboarding_controller.dart';
+import 'account_remote.dart';
 import 'auth_repository.dart';
 
 /// Keeps the data on this phone tied to the account it belongs to.
@@ -132,6 +133,15 @@ class AccountSync {
   /// them, so the UI warns first.
   int get unsyncedCount =>
       _meals.loadPending().length + (_profiles.pending ? 1 : 0);
+
+  /// Deletes the account on the server, then clears this phone as a sign-out
+  /// does. Throws [AccountDeletionException] and leaves everything in place
+  /// if the server could not do it.
+  Future<void> deleteAccount() async {
+    await _ref.read(accountRemoteProvider).deleteAccount();
+    // Nothing is left to sync to, so there is no point keeping the queue.
+    await signOut();
+  }
 
   /// Signs out and wipes this phone's copy, so the next person to sign in
   /// never sees it.
