@@ -21,5 +21,9 @@ abstract final class AppRoutes {
   static const barcodeResult = '/barcode-result';
   static const quickAdd = '/quick-add';
 
+  /// One logged meal, full screen above the tabs.
+  static const mealDetailPattern = '/meal/:id';
+  static String mealDetail(String id) => '/meal/$id';
+
   static const deleteAccount = '/settings/delete-account';
 }

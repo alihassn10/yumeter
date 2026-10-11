@@ -9,6 +9,7 @@ import 'package:yumeter/features/auth/data/account_remote.dart';
 import 'package:yumeter/features/auth/data/auth_repository.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/onboarding/domain/onboarding_answers.dart';
+import 'package:yumeter/features/progress/data/weight_log_store.dart';
 
 import 'fakes.dart';
 
@@ -46,6 +47,7 @@ List<Override> testOverrides(
   FakeMealRemote? meals,
   FakeProfileRemote? profiles,
   FakeAccountRemote? account,
+  FakeWeightRemote? weights,
 }) =>
     [
       sharedPreferencesProvider.overrideWithValue(prefs),
@@ -53,6 +55,7 @@ List<Override> testOverrides(
       mealRemoteProvider.overrideWithValue(meals ?? FakeMealRemote()),
       profileRemoteProvider.overrideWithValue(profiles ?? FakeProfileRemote()),
       accountRemoteProvider.overrideWithValue(account ?? FakeAccountRemote()),
+      weightRemoteProvider.overrideWithValue(weights ?? FakeWeightRemote()),
     ];
 
 ProviderContainer testContainer(
@@ -61,6 +64,7 @@ ProviderContainer testContainer(
   FakeMealRemote? meals,
   FakeProfileRemote? profiles,
   FakeAccountRemote? account,
+  FakeWeightRemote? weights,
 }) =>
     ProviderContainer(
       overrides: testOverrides(
@@ -69,5 +73,6 @@ ProviderContainer testContainer(
         meals: meals,
         profiles: profiles,
         account: account,
+        weights: weights,
       ),
     );

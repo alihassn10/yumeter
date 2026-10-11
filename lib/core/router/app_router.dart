@@ -6,10 +6,13 @@ import '../../features/home/home_shell.dart';
 import '../../features/home/today_screen.dart';
 import '../../features/log/quick_add_screen.dart';
 import '../../features/meals/domain/meal_entry.dart';
+import '../../features/meals/meal_detail_screen.dart';
+import '../../features/meals/meals_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/paywall/paywall_screen.dart';
 import '../../features/plan/creating_plan_screen.dart';
 import '../../features/plan/plan_reveal_screen.dart';
+import '../../features/progress/progress_screen.dart';
 import '../../features/scan/domain/picked_photo.dart';
 import '../../features/scan/meal_result_screen.dart';
 import '../../features/scan/scan_screen.dart';
@@ -68,18 +71,22 @@ final appRouter = GoRouter(
             ),
           ],
         ),
-        for (final (path, title) in const [
-          (AppRoutes.analytics, 'Progress'),
-          (AppRoutes.meals, 'Meals'),
-        ])
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: path,
-                builder: (_, _) => _Placeholder(title: title),
-              ),
-            ],
-          ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.analytics,
+              builder: (_, _) => const ProgressScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.meals,
+              builder: (_, _) => const MealsScreen(),
+            ),
+          ],
+        ),
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -110,6 +117,11 @@ final appRouter = GoRouter(
           state.extra is PickedPhoto ? null : AppRoutes.scan,
       builder: (_, state) =>
           MealResultScreen(photo: state.extra! as PickedPhoto),
+    ),
+    GoRoute(
+      path: AppRoutes.mealDetailPattern,
+      builder: (_, state) =>
+          MealDetailScreen(mealId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: AppRoutes.deleteAccount,

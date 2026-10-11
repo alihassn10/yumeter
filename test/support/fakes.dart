@@ -7,6 +7,8 @@ import 'package:yumeter/features/auth/data/auth_repository.dart';
 import 'package:yumeter/features/meals/data/meal_remote.dart';
 import 'package:yumeter/features/meals/domain/meal_entry.dart';
 import 'package:yumeter/features/onboarding/domain/onboarding_answers.dart';
+import 'package:yumeter/features/progress/data/weight_log_store.dart';
+import 'package:yumeter/features/progress/domain/weight_entry.dart';
 import 'package:yumeter/features/scan/data/meal_photo_service.dart';
 import 'package:yumeter/features/scan/domain/meal_draft.dart';
 
@@ -117,6 +119,41 @@ class FakeMealPhotoService implements MealPhotoService {
 
   @override
   Future<void> remove(String photoPath) async => removed.add(photoPath);
+
+  /// Tests stay offline, so a photo never loads; the screen shows its
+  /// placeholder instead.
+  @override
+  Future<String> viewUrl(String photoPath) async =>
+      throw Exception('offline in tests');
+}
+
+class FakeWeightRemote implements WeightRemote {
+  final rows = <String, WeightEntry>{};
+  bool offline = false;
+
+  void _check() {
+    if (offline) throw Exception('offline');
+  }
+
+  @override
+  Future<List<WeightEntry>> fetchAll() async {
+    _check();
+    return rows.values.toList();
+  }
+
+  @override
+  Future<void> upsert(List<WeightEntry> entries) async {
+    _check();
+    for (final e in entries) {
+      rows[e.key] = e;
+    }
+  }
+
+  @override
+  Future<void> delete(List<String> days) async {
+    _check();
+    days.forEach(rows.remove);
+  }
 }
 
 /// Records deletions; set [failure] to make the next one fail that way.

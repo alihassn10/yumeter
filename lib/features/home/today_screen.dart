@@ -135,6 +135,7 @@ class TodayScreen extends ConsumerWidget {
               for (final entry in meals) ...[
                 MealTile(
                   entry: entry,
+                  onTap: () => context.push(AppRoutes.mealDetail(entry.id)),
                   onDelete: () => _delete(context, ref, entry),
                 ),
                 const SizedBox(height: AppSpacing.sm),

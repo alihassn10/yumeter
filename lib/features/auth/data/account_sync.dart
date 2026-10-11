@@ -11,12 +11,14 @@ import '../../meals/data/meal_log_store.dart';
 import '../../meals/state/meal_log_controller.dart';
 import '../../onboarding/domain/onboarding_answers.dart';
 import '../../onboarding/state/onboarding_controller.dart';
+import '../../progress/data/weight_log_store.dart';
+import '../../progress/state/weight_log_controller.dart';
 import 'account_remote.dart';
 import 'auth_repository.dart';
 
 /// Keeps the data on this phone tied to the account it belongs to.
 ///
-/// Meals and the profile are read from the phone first and synced in the
+/// Meals, weigh-ins and the profile are read from the phone first and synced in the
 /// background. This class decides what happens to that local copy when
 /// someone signs in or out, and moves the profile between phone and account.
 class AccountSync {
@@ -30,6 +32,7 @@ class AccountSync {
 
   ProfileStore get _profiles => _ref.read(profileStoreProvider);
   MealLogStore get _meals => _ref.read(mealLogStoreProvider);
+  WeightLogStore get _weights => _ref.read(weightLogStoreProvider);
 
   /// Claims or replaces the local data for [user] and brings in the account's
   /// copy. Returns whether a profile exists, which decides between onboarding
@@ -48,6 +51,9 @@ class AccountSync {
         await _meals.markPending({
           for (final e in _meals.load()) e.id: PendingOp.upsert,
         });
+        await _weights.queue.mark({
+          for (final e in _weights.load()) e.key: PendingOp.upsert,
+        });
         adopting = true;
       } else {
         // Someone else's data on a shared phone.
@@ -56,8 +62,11 @@ class AccountSync {
       await prefs.setString(_ownerKey, user.id);
     }
 
-    _ref.invalidate(mealLogProvider);
+    _ref
+      ..invalidate(mealLogProvider)
+      ..invalidate(weightLogProvider);
     unawaited(_ref.read(mealLogProvider.notifier).sync());
+    unawaited(_ref.read(weightLogProvider.notifier).sync());
     return restoreProfile(adopting: adopting);
   }
 
@@ -125,6 +134,7 @@ class AccountSync {
     if (_ref.read(currentUserProvider) == null) return;
     await Future.wait([
       _ref.read(mealLogProvider.notifier).sync(),
+      _ref.read(weightLogProvider.notifier).sync(),
       _tryPushProfile(),
     ]);
   }
@@ -132,7 +142,9 @@ class AccountSync {
   /// Changes on this phone the account does not have yet. Signing out drops
   /// them, so the UI warns first.
   int get unsyncedCount =>
-      _meals.loadPending().length + (_profiles.pending ? 1 : 0);
+      _meals.loadPending().length +
+      _weights.queue.load().length +
+      (_profiles.pending ? 1 : 0);
 
   /// Deletes the account on the server, then clears this phone as a sign-out
   /// does. Throws [AccountDeletionException] and leaves everything in place
@@ -160,9 +172,11 @@ class AccountSync {
 
   Future<void> _clearLocal() async {
     await _meals.clear();
+    await _weights.clear();
     await _profiles.clear();
     _ref
       ..invalidate(mealLogProvider)
+      ..invalidate(weightLogProvider)
       ..invalidate(storedProfileProvider)
       // A half-finished quiz is the previous person's too.
       ..invalidate(onboardingControllerProvider);

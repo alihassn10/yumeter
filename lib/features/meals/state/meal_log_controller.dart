@@ -166,6 +166,15 @@ class MealLogController extends Notifier<List<MealEntry>> {
         {id: PendingOp.delete},
       );
 
+  /// Saves an edited meal under its existing id.
+  Future<void> update(MealEntry entry) async {
+    if (!state.any((e) => e.id == entry.id)) return;
+    await _commit(
+      [for (final e in state) e.id == entry.id ? entry : e],
+      {entry.id: PendingOp.upsert},
+    );
+  }
+
   /// Puts a removed entry back with its original id and time, for undo.
   Future<void> restore(MealEntry entry) async {
     if (state.any((e) => e.id == entry.id)) return;

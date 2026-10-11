@@ -48,6 +48,10 @@ abstract interface class MealPhotoService {
 
   /// Removes a photo that will not be saved with a meal.
   Future<void> remove(String photoPath);
+
+  /// A short-lived link to view a meal's photo. The bucket is private, so
+  /// photos are only ever shown through signed links like this.
+  Future<String> viewUrl(String photoPath);
 }
 
 class SupabaseMealPhotoService implements MealPhotoService {
@@ -121,6 +125,11 @@ class SupabaseMealPhotoService implements MealPhotoService {
   Future<void> remove(String photoPath) async {
     await _client.storage.from(mealPhotosBucket).remove([photoPath]);
   }
+
+  @override
+  Future<String> viewUrl(String photoPath) => _client.storage
+      .from(mealPhotosBucket)
+      .createSignedUrl(photoPath, const Duration(hours: 1).inSeconds);
 }
 
 final mealPhotoServiceProvider = Provider<MealPhotoService>(
