@@ -11,8 +11,9 @@ const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/interactions'
 const DEFAULT_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite']
 
 // One slow model must not eat the whole budget, and the user should hear back
-// within about a minute either way.
-const ATTEMPT_TIMEOUT_MS = 25_000
+// within about a minute either way. Short enough that all three models fit:
+// at 25 s, two timeouts left too little time to ever reach the third.
+const ATTEMPT_TIMEOUT_MS = 17_000
 const DEADLINE_MS = 55_000
 const MIN_ATTEMPT_MS = 5_000
 
